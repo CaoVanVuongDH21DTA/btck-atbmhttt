@@ -37,7 +37,7 @@ public class LogoutServlet extends HttpServlet {
 		
 		cookieUtils.addCookie(response, "email", null, 0);
 		
-		sessionUtils.removeSession(request, "customer");
+		sessionUtils.removeSession(request, "user");
 		
 		response.sendRedirect("HomeServlet");
 	}
