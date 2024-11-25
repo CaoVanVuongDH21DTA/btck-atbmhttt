@@ -80,20 +80,20 @@ https://templatemo.com/tm-546-sixteen-clothing
 						<li class="nav-item ${flag == 'Products' ? 'active' : '' }">
 							<a class="nav-link"
 							href="ProductServlet">Products</a></li>
-						<c:if test="${sessionScope.customer == null }">
+						<c:if test="${sessionScope.user == null }">
 							<li class="nav-item"><a class="nav-link" href="LoginServlet">Sign
 									In </a></li>
 							<li class="nav-item"><a class="nav-link"
 								href="Register	Servlet">Sign Up</a>
 						</c:if>
-						<c:if test="${sessionScope.customer != null }">
+						<c:if test="${sessionScope.user != null }">
 							<li class="nav-item ${flag == 'Cart' ? 'active' : '' }"><a class="nav-link" href="CartServlet">Cart
 									
 							</a></li>
 							<li class="nav-item ${flag == 'Orders' ? 'active' : '' }"><a class="nav-link" href="OrderServlet">Orders
 									
 							</a></li>
-							<li class="nav-item"><h6 style="color: blue">${sessionScope.customer.fullname }</h6>
+							<li class="nav-item"><h6 style="color: blue">${sessionScope.user.fullname }</h6>
 								<a class="nav-link" href="LogoutServlet">Logout</a></li>
 						</c:if>
 					</ul>

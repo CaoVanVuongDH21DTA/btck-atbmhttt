@@ -4,6 +4,7 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.util.Base64;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -90,4 +91,67 @@ public class UserDAO extends EntityDAO<User> {
 		}
 		return null;
 	}
+	
+	public void registerUser(User user) {
+        EntityManager em = JpaUtils.getEntityManager();
+        try {
+            // Hash mật khẩu
+            String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
+            user.setPassword(hashedPassword);
+
+            // Tạo cặp khóa RSA
+            KeyPair keyPair = generateKeyPair();
+            PublicKey publicKey = keyPair.getPublic();
+            PrivateKey privateKey = keyPair.getPrivate();
+
+         // Mã hóa publicKey thành chuỗi base64
+            String base64PublicKey = Base64.getEncoder().encodeToString(publicKey.getEncoded());
+
+            // Lưu publicKey vào cơ sở dữ liệu (dưới dạng base64)
+            user.setKey(base64PublicKey);
+
+            // Lưu privateKey vào file hoặc hệ thống bên ngoài
+            savePrivateKey(privateKey, user.getFullname());
+
+            // Persist user vào cơ sở dữ liệu
+            em.getTransaction().begin();
+            em.persist(user);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private KeyPair generateKeyPair() throws Exception {
+        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+        keyGen.initialize(2048);
+        return keyGen.generateKeyPair();
+    }
+
+    private void savePrivateKey(PrivateKey privateKey, String fullname) {
+        try {
+            // Định nghĩa tên tệp với fullname trong tên tệp
+            String fileName = "private_key_" + fullname.replaceAll("\\s+", "_") + ".pem"; // thay thế khoảng trắng bằng "_"
+            
+            // Định nghĩa đường dẫn đến tệp private_key.pem trong thư mục src/key_user
+            java.nio.file.Path path = java.nio.file.Paths.get("src/key_user/" + fileName);
+
+            // Kiểm tra nếu thư mục chưa tồn tại, tạo thư mục
+            java.nio.file.Path parentDir = path.getParent();
+            if (parentDir != null && !java.nio.file.Files.exists(parentDir)) {
+                java.nio.file.Files.createDirectories(parentDir);
+            }
+
+            // Mã hóa private key thành base64
+            String base64PrivateKey = Base64.getEncoder().encodeToString(privateKey.getEncoded());
+
+            // Ghi chuỗi base64 vào tệp
+            java.nio.file.Files.write(path, base64PrivateKey.getBytes());
+
+            System.out.println("Private key has been saved in base64 format to: " + path);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }
