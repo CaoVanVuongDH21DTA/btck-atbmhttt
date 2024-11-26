@@ -20,8 +20,8 @@ public class OrderItem implements Serializable {
 
 	//bi-directional many-to-one association to Order
 	@ManyToOne
-	@JoinColumn(name="id_orders")
-	private Order order;
+    @JoinColumn(name="id_orders")
+    private Order order;
 
 	//bi-directional many-to-one association to Product
 	@ManyToOne

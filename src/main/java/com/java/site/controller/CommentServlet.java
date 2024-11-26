@@ -31,10 +31,11 @@ public class CommentServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		try {
+			request.setCharacterEncoding("UTF-8");
 			
 			SessionUtils sessionUtils = new SessionUtils();
 			
-			User user = (User)sessionUtils.getSession(request, "customer");
+			User user = (User)sessionUtils.getSession(request, "user");
 			
 			if(user == null) {
 				response.sendRedirect("LoginServlet");

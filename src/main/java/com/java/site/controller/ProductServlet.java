@@ -24,6 +24,8 @@ public class ProductServlet extends HttpServlet {
   
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
+			request.setCharacterEncoding("UTF-8");
+			
 			ProductDAO productDAO = new ProductDAO();
 			
 			FormUtils formUtils = new FormUtils();

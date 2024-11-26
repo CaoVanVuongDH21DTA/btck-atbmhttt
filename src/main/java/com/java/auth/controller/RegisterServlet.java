@@ -37,7 +37,7 @@ public class RegisterServlet extends HttpServlet {
 			
 			if(message == null) {
 
-				userDAO.insert(user);
+				userDAO.registerUser(user);
 				
 				request.setAttribute("message", "Register successfully!");
 				

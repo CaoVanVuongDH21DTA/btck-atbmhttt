@@ -20,7 +20,7 @@ public class JpaUtils {
         Map<String, String> map = new HashMap<>();
         
         // Nhập trực tiếp giá trị cấu hình ở đây
-        map.put(FINAL_URL, "jdbc:mysql://localhost:3306/apptmdt");
+        map.put(FINAL_URL, "jdbc:mysql://localhost:3306/apptmdt?useUnicode=true&characterEncoding=UTF-8");
         map.put(FINAL_USER, "apptmdt");
         map.put(FINAL_PASSWORD, "1");
         map.put(FINAL_DRIVER, "com.mysql.cj.jdbc.Driver");
@@ -38,14 +38,5 @@ public class JpaUtils {
         }
         
         return em;
-    }
-
-    public static void main(String[] args) {
-        EntityManager em = JpaUtils.getEntityManager();
-        if (em != null) {
-            System.out.println("OK");
-        } else {
-            System.out.println("NOT");
-        }
     }
 }

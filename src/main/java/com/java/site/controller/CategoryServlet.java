@@ -23,6 +23,8 @@ public class CategoryServlet extends HttpServlet {
    
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
+			request.setCharacterEncoding("UTF-8");
+			
 			FormUtils formUtils = new FormUtils();
 			
 			CategoryDAO categoryDAO = new CategoryDAO();

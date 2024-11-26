@@ -2,6 +2,15 @@
     pageEncoding="UTF-8"%>
     <%@ taglib uri="http://java.sun.com/jstl/core_rt" prefix="c"%>
     <%@ taglib uri="http://java.sun.com/jstl/fmt_rt" prefix="fmt" %>
+    
+<style>
+  .product-item img {
+    width: 100%;  /* Chiếm hết chiều rộng của phần tử cha */
+    height: auto; /* Để chiều cao tự động điều chỉnh theo tỷ lệ */
+    object-fit: contain; /* Giữ tỷ lệ của hình ảnh mà không bị méo */
+  }
+</style>
+    
 <div class="products">
       <div class="container">
         <div class="row">

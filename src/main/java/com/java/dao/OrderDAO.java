@@ -8,6 +8,7 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import com.java.model.Order;
+import com.java.model.OrderItem;
 import com.java.utils.JpaUtils;
 
 public class OrderDAO extends EntityDAO<Order> {
@@ -15,6 +16,28 @@ public class OrderDAO extends EntityDAO<Order> {
 	public OrderDAO() {
 		super(Order.class);
 		// TODO Auto-generated constructor stub
+	}
+	
+	public void insertByOrder(Order order) {
+	    EntityManager em = null;
+	    try {
+	        em = JpaUtils.getEntityManager();
+	        em.getTransaction().begin();
+	        
+	        // Persist the orderItem
+	        em.persist(order);
+	        
+	        em.getTransaction().commit();
+	    } catch (Exception e) {
+	        if (em != null) {
+	            em.getTransaction().rollback();
+	        }
+	        e.printStackTrace();
+	    } finally {
+	        if (em != null) {
+	            em.close();
+	        }
+	    }
 	}
 	
 	public List<Order> getByUser(int id_user){
@@ -85,6 +108,35 @@ public class OrderDAO extends EntityDAO<Order> {
 		}
 		return null;
 	}
+	
+	public void updateOrderStatus(int orderId, String newStatus) {
+	    EntityManager em = null;
+	    try {
+	        em = JpaUtils.getEntityManager();
+	        em.getTransaction().begin();
+
+	        // Tìm kiếm đơn hàng theo ID
+	        Order order = em.find(Order.class, orderId);
+	        if (order != null) {
+	            // Cập nhật trạng thái đơn hàng
+	            order.setStatus(newStatus);
+	            em.merge(order);  // Cập nhật lại đối tượng order trong cơ sở dữ liệu
+	        }
+
+	        em.getTransaction().commit();
+	    } catch (Exception e) {
+	        if (em != null) {
+	            em.getTransaction().rollback();
+	        }
+	        e.printStackTrace();
+	    } finally {
+	        if (em != null) {
+	            em.close();
+	        }
+	    }
+	}
+
+	
 	public static void main(String[] args) {
 		
 		List<Order> listOrders = new OrderDAO().getActive();

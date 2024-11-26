@@ -24,12 +24,12 @@
                           <c:forEach items="${listOrders }" var="item">
                           		 <tr class="cell-1">
 	                                <td>#${item.idOrders }</td>
-	                                <td>${item.customer.fullname }</td>
+	                                <td>${item.user.fullname }</td>
 	                                <td>${item.address }</td>
 	                                <td>${item.phone }</td>
 	                                <td>${item.amount }</td>
 	                                <td>${item.created }</td>
-	                                <td><span class="badge badge-success">${item.status }</span></td>
+	                                <td><span class="badge badge-success" style="color: red;">${item.status } </span></td>
 	                                <td>
 										 <a href="DetailOrderServlet?id=${item.idOrders }" class="btn btn-primary">Detail</a>
 										  <c:if test="${item.status != 'Giao thanh cong' }">
