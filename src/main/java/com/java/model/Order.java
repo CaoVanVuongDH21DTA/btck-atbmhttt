@@ -5,7 +5,6 @@ import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
 
-
 @Entity
 @Table(name="orders")
 @NamedQueries({
@@ -17,6 +16,7 @@ public class Order implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="id_orders")
 	private int idOrders;
 
@@ -34,10 +34,10 @@ public class Order implements Serializable {
 	private boolean active = true;
 
 	//bi-directional many-to-one association to OrderItem
-	@OneToMany(mappedBy="order")
+	 @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
 	private List<OrderItem> orderItems;
 
-	//bi-directional many-to-one association to Customer
+	//bi-directional many-to-one association to User
 	@ManyToOne()
 	@JoinColumn(name="user_id")
 	private User user;

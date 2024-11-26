@@ -27,6 +27,7 @@ public class HomeServlet extends HttpServlet {
 			throws ServletException, IOException {
 		try {
 			//kiểm tra đăng nhập
+			request.setCharacterEncoding("UTF-8");
 			
 			CookieUtils cookieUtils = new CookieUtils();
 			
@@ -36,7 +37,7 @@ public class HomeServlet extends HttpServlet {
 			
 			
 			if(email != null) {
-				User user = sessionUtils.getSession(request, "customer");
+				User user = sessionUtils.getSession(request, "user");
 			}
 			
 			//xử lí dữ liệu

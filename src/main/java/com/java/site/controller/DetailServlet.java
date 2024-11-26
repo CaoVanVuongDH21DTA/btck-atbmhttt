@@ -26,6 +26,8 @@ public class DetailServlet extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
+			request.setCharacterEncoding("UTF-8");
+			
 			int id_product = Integer.parseInt(request.getParameter("id"));
 			
 			ProductDAO productDAO = new ProductDAO();

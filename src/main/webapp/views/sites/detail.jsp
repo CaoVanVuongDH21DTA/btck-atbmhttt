@@ -1,3 +1,5 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <div class="row">
 	<div class="product col-md-4 offset-1">
@@ -29,7 +31,7 @@
 		<h3 class="mt-3" style="color: blue; font-weight: bolder;">Reviews</h3>
 		<ul class="list-group mb-3">
 			<c:forEach items="${listReviews }" var="item">
-				<li class="list-group-item list-group-item-primary">${item.customer.fullname } said:</li>
+				<li class="list-group-item list-group-item-primary">${item.user.fullname } said:</li>
 				<li class="list-group-item list-group-item-danger"> ${item.comment }</li>
 			</c:forEach>
 		</ul>

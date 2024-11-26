@@ -39,23 +39,23 @@ public class UserDAO extends EntityDAO<User> {
 	}
 	
 	public User getUser(String email, String password) {
-		EntityManager em = JpaUtils.getEntityManager();
-		
-		try {
-			String jpql = "SELECT u FROM User u WHERE u.email = :email AND u.password = :password";
-			
-			TypedQuery<User> query = em.createQuery(jpql, User.class);
-			
-			query.setParameter("email", email);
-			
-			query.setParameter("password", password);
-			
-			return query.getSingleResult();
-		} catch (Exception e) {
-			// TODO: handle exception
-			return null;
-		}
-		
+	    EntityManager em = JpaUtils.getEntityManager();
+	    
+	    try {
+	        String jpql = "SELECT u FROM User u WHERE u.email = :email";
+	        TypedQuery<User> query = em.createQuery(jpql, User.class);
+	        query.setParameter("email", email);
+	        
+	        User user = query.getSingleResult();
+	        
+	        if (user != null && BCrypt.checkpw(password, user.getPassword())) {
+	            return user;  // Login success
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    
+	    return null;  // Invalid email or password
 	}
 	
 	public static boolean isUniqueEmail(String email) {

@@ -1,6 +1,7 @@
 package com.java.cart.controller;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
@@ -31,139 +32,136 @@ import com.java.utils.SessionUtils;
 
 @WebServlet("/CheckoutServlet")
 public class CheckoutServlet extends HttpServlet {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
-		try {
-			SessionUtils sessionUtils = new SessionUtils();
+        try {
+            // Ensure the response uses UTF-8 encoding
+        	request.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html; charset=UTF-8");
+            response.setCharacterEncoding("UTF-8");
 
-			User user = (User) sessionUtils.getSession(request, "user");
+            SessionUtils sessionUtils = new SessionUtils();
 
-			OrderDAO orderDAO = new OrderDAO();
+            User user = (User) sessionUtils.getSession(request, "user");
 
-			OrderItemDAO orderItemDAO = new OrderItemDAO();
+            OrderDAO orderDAO = new OrderDAO();
+            OrderItemDAO orderItemDAO = new OrderItemDAO();
+            ProductDAO productDAO = new ProductDAO();
+            CartItemDAO cartItemDAO = new CartItemDAO();
 
-			ProductDAO productDAO = new ProductDAO();
+            List<CartItem> listCartItems = cartItemDAO.getByUser(user.getIdUsers());
 
-			CartItemDAO cartItemDAO = new CartItemDAO();
+            if (listCartItems.size() == 0) {
+                response.sendRedirect("CartServlet");
+            } else {
+                double num_amount = 0;
+                for (CartItem cartItem : listCartItems) {
+                    Product product = cartItem.getProduct();
 
-			List<CartItem> listCartItems = cartItemDAO.getByUser(user.getIdUsers());
+                    double price = (100 - product.getDiscount().getPercent()) * product.getPrice() / 100;
+                    num_amount += (price * cartItem.getQuantity());
+                }
 
-			if (listCartItems.size() == 0) {
+                Date date_current = new Date(System.currentTimeMillis());
+                String str_address = request.getParameter("address");
+                String str_phone = request.getParameter("phone");
 
-				response.sendRedirect("CartServlet");
+                Order order = new Order();
+                order.setAmount(num_amount);
+                order.setCreated(date_current);
+                order.setAddress(str_address);
+                order.setPhone(str_phone);
+                order.setStatus("Chờ Duyệt");
+                order.setUser(user);
 
-			} else {
+                // Insert order into DB
+                orderDAO.insertByOrder(order);
 
-				// lấy dữ liệu
-				int id_order = orderDAO.getLastId() + 1;
+                // Insert order items into DB
+                for (CartItem cartItem : listCartItems) {
+                    OrderItem orderItem = new OrderItem();
+                    Product current_Product = productDAO.findById(cartItem.getProduct().getIdProducts());
+                    orderItem.setProduct(current_Product);
+                    orderItem.setOrder(order);
+                    orderItem.setQuantity(cartItem.getQuantity());
 
-				double num_amount = 0;
-				for (CartItem cartItem : listCartItems) {
-					Product product = cartItem.getProduct();
+                    double currrent_Price = (100 - current_Product.getDiscount().getPercent())
+                            * current_Product.getPrice() / 100;
 
-					double price = (100 - product.getDiscount().getPercent()) * product.getPrice() / 100;
+                    orderItem.setPrice(currrent_Price);
+                    orderItemDAO.insertByOrderItem(orderItem);
+                }
 
-					num_amount += (price * cartItem.getQuantity());
-				}
+                // Remove items from the cart
+                for (CartItem cartItem : listCartItems) {
+                    cartItemDAO.delete(cartItem.getIdCartItem());
+                }
 
-				Date date_current = new Date(System.currentTimeMillis());
+                // Send email confirmation
+                Properties properties = new Properties();
+                properties.put("mail.smtp.host", "smtp.gmail.com");
+                properties.put("mail.smtp.port", "465");
+                properties.put("mail.smtp.auth", "true");
+                properties.put("mail.smtp.starttls.enable", "true");
+                properties.put("mail.smtp.starttls.required", "true");
+                properties.put("mail.smtp.ssl.protocols", "TLSv1.2");
+                properties.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
 
-				String str_address = request.getParameter("address");
-
-				String str_phone = request.getParameter("phone");
-
-				Order order = new Order();
-
-				order.setIdOrders(id_order);
-
-				order.setAmount(num_amount);
-
-				order.setCreated(date_current);
-
-				order.setAddress(str_address);
-
-				order.setPhone(str_phone);
-
-				order.setStatus("Cho duyet");
-
-				order.setUser(user);
-
-				// thao tác với csdl
-				orderDAO.insert(order);
-
-				for (CartItem cartItem : listCartItems) {
-					OrderItem orderItem = new OrderItem();
-
-					Product current_Product = productDAO.findById(cartItem.getProduct().getIdProducts());
-
-					orderItem.setProduct(current_Product);
-
-					orderItem.setOrder(order);
-
-					orderItem.setQuantity(cartItem.getQuantity());
-
-					double currrent_Price = (100 - current_Product.getDiscount().getPercent())
-							* current_Product.getPrice() / 100;
-
-					orderItem.setPrice(currrent_Price);
-
-					orderItemDAO.insert(orderItem);
-
-				}
-
-				for (CartItem cartItem : listCartItems) {
-					cartItemDAO.delete(cartItem.getIdCartItem());
-				}
-
-				// gửi mail xác nhận
-				Properties properties = new Properties();
-				properties.put("mail.smtp.host", "smtp.gmail.com");
-				properties.put("mail.smtp.port", "465");
-				properties.put("mail.smtp.auth", "true");
-				properties.put("mail.smtp.starttls.enable", "true");
-				properties.put("mail.smtp.starttls.required", "true");
-				properties.put("mail.smtp.ssl.protocols", "TLSv1.2");
-				properties.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-				
-				// Sử dụng biến môi trường hệ thống
-                String username = System.getenv("USERNAME_GMAIL");
-                String password = System.getenv("PASSWORD_GMAIL");
+                // Fetch email credentials from environment variables
+                String username = "gearpro.shop.2024@gmail.com";
+                String password = "jytbkuoffatojafe";
 
                 if (username == null || password == null) {
                     throw new IllegalArgumentException("Thiếu biến môi trường cho thông tin đăng nhập email.");
                 }
 
-                Session session = Session.getInstance(properties, new javax.mail.Authenticator() {
+                // Create session with email credentials
+                Session emailSession = Session.getInstance(properties, new javax.mail.Authenticator() {
                     @Override
                     protected PasswordAuthentication getPasswordAuthentication() {
                         return new PasswordAuthentication(username, password);
                     }
                 });
-				
-				MimeMessage message = new MimeMessage(session);
 
-				message.setFrom(new InternetAddress(username));
-				message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(user.getEmail()));
-				message.setSubject("Xác nhận đơn hàng", "UTF-8");
-				message.setText("Đơn hàng có mã " + id_order + " được đặt thành công vào lúc " + date_current.toString(), "UTF-8", "HTML");
-				message.setReplyTo(message.getFrom());
+                MimeMessage message = new MimeMessage(emailSession);
 
-				Transport.send(message);
-				
-				response.sendRedirect("OrderServlet");
-			}
-		} catch (Exception e) {
-			// TODO: handle exception
-			e.printStackTrace();
-		}
-	}
+                message.setFrom(new InternetAddress(username));
+                message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(user.getEmail()));
 
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doGet(req, resp);
-	}
+                // Use UTF-8 encoding for subject and body
+                message.setSubject("Xác nhận đơn hàng", "UTF-8");
+//                String emailContent = "Đơn hàng có mã " + order.getIdOrders() + " được đặt thành công vào lúc " + date_current.toString();
+                String confirmationLink = "http://localhost:8080/btck-atbmhttt/confirmOrder?orderId=" + order.getIdOrders();
+                String emailContent = "Đơn hàng có mã " + order.getIdOrders() + " được đặt thành công vào lúc " + date_current.toString() + 
+                    "<br/>Vui lòng xác nhận đơn hàng tại: <a href=\"" + confirmationLink + "\">Xác nhận đơn hàng</a>";
 
+                message.setText(emailContent, "UTF-8", "html");
+                message.setReplyTo(message.getFrom());
+
+                Transport.send(message);
+
+             // Hiển thị thông báo bằng alert và chuyển hướng
+                PrintWriter out = response.getWriter();
+                out.println("<html>");
+                out.println("<head>");
+                out.println("<script type=\"text/javascript\">");
+                out.println("alert('Đơn hàng đã được tạo thành công!\\nVui lòng kiểm tra email của bạn để xác nhận đơn hàng mã " + order.getIdOrders() + "');");
+                out.println("window.location.href = 'OrderServlet';"); // Chuyển hướng tới trang OrderServlet
+                out.println("</script>");
+                out.println("</head>");
+                out.println("<body>");
+                out.println("</body>");
+                out.println("</html>");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        doGet(req, resp);
+    }
 }

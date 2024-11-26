@@ -14,6 +14,29 @@ public class OrderItemDAO extends EntityDAO<OrderItem> {
 		super(OrderItem.class);
 		// TODO Auto-generated constructor stub
 	}
+	
+	public void insertByOrderItem(OrderItem orderItem) {
+	    EntityManager em = null;
+	    try {
+	        em = JpaUtils.getEntityManager();
+	        em.getTransaction().begin();
+	        
+	        // Persist the orderItem
+	        em.persist(orderItem);
+	        
+	        em.getTransaction().commit();
+	    } catch (Exception e) {
+	        if (em != null) {
+	            em.getTransaction().rollback();
+	        }
+	        e.printStackTrace();
+	    } finally {
+	        if (em != null) {
+	            em.close();
+	        }
+	    }
+	}
+
 
 	public List<OrderItem> getByOrder(int id_order){
 		try {
