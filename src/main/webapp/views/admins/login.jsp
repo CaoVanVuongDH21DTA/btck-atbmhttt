@@ -18,7 +18,7 @@
 <body>
 	<div class="container">
 		<div class="row col-4 offset-4">
-			<form action="/java-assignment/AdminSigninServlet" method="post">
+			<form action="/btck-atbmhttt/AdminSigninServlet" method="post">
 			<c:if test="${not empty message }">
 				<div class="alert alert-danger" role="alert">
 					  ${message }

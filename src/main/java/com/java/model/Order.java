@@ -1,139 +1,151 @@
 package com.java.model;
 
 import java.io.Serializable;
-import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
-
+import javax.persistence.*;
 
 @Entity
 @Table(name="orders")
 @NamedQueries({
-	@NamedQuery(name="Order.findAll", query="SELECT o FROM Order o"),
-	@NamedQuery(name="Order.findByStatus", query="SELECT o FROM Order o WHERE o.status IN (:statuses)"),
-	@NamedQuery(name="Order.findActive", query="SELECT o FROM Order o WHERE o.active = true")
+    @NamedQuery(name="Order.findAll", query="SELECT o FROM Order o"),
+    @NamedQuery(name="Order.findByStatus", query="SELECT o FROM Order o WHERE o.status IN (:statuses)"),
+    @NamedQuery(name="Order.findActive", query="SELECT o FROM Order o WHERE o.active = true")
 })
 public class Order implements Serializable {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Id
-	@Column(name="id_orders")
-	private int idOrders;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="id_orders")
+    private int idOrders;
 
-	private String address;
+    private String address;
 
-	private double amount;
+    private double amount;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date created;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date created;
 
-	private String phone;
+    private String phone;
 
-	private String status;
-	
-	private boolean active = true;
+    private String status;
 
-	//bi-directional many-to-one association to OrderItem
-	@OneToMany(mappedBy="order")
-	private List<OrderItem> orderItems;
+    private boolean active = true;  // Thuộc tính này phải có giá trị mặc định là true
 
-	//bi-directional many-to-one association to Customer
-	@ManyToOne()
-	@JoinColumn(name="user_id")
-	private User user;
+    // Thuộc tính mới để lưu mã hash
+    @Column(name="hash_code")
+    private String hashCode;
 
-	public Order() {
-	}
+    // Bi-directional many-to-one association to OrderItem
+    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
+    private List<OrderItem> orderItems;
 
-	public int getIdOrders() {
-		return this.idOrders;
-	}
+    // Bi-directional many-to-one association to User
+    @ManyToOne()
+    @JoinColumn(name="user_id")
+    private User user;
 
-	public void setIdOrders(int idOrders) {
-		this.idOrders = idOrders;
-	}
+    public Order() {
+    }
 
-	public String getAddress() {
-		return this.address;
-	}
+    public int getIdOrders() {
+        return this.idOrders;
+    }
 
-	public void setAddress(String address) {
-		this.address = address;
-	}
+    public void setIdOrders(int idOrders) {
+        this.idOrders = idOrders;
+    }
 
-	public double getAmount() {
-		return this.amount;
-	}
+    public String getAddress() {
+        return this.address;
+    }
 
-	public void setAmount(double amount) {
-		this.amount = amount;
-	}
+    public void setAddress(String address) {
+        this.address = address;
+    }
 
-	public Date getCreated() {
-		return this.created;
-	}
+    public double getAmount() {
+        return this.amount;
+    }
 
-	public void setCreated(Date created) {
-		this.created = created;
-	}
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
 
-	public String getPhone() {
-		return this.phone;
-	}
+    public Date getCreated() {
+        return this.created;
+    }
 
-	public void setPhone(String phone) {
-		this.phone = phone;
-	}
+    public void setCreated(Date created) {
+        this.created = created;
+    }
 
-	public String getStatus() {
-		return this.status;
-	}
+    public String getPhone() {
+        return this.phone;
+    }
 
-	public void setStatus(String status) {
-		this.status = status;
-	}
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
 
-	public List<OrderItem> getOrderItems() {
-		return this.orderItems;
-	}
+    public String getStatus() {
+        return this.status;
+    }
 
-	public void setOrderItems(List<OrderItem> orderItems) {
-		this.orderItems = orderItems;
-	}
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
-	public OrderItem addOrderItem(OrderItem orderItem) {
-		getOrderItems().add(orderItem);
-		orderItem.setOrder(this);
+    public List<OrderItem> getOrderItems() {
+        return this.orderItems;
+    }
 
-		return orderItem;
-	}
+    public void setOrderItems(List<OrderItem> orderItems) {
+        this.orderItems = orderItems;
+    }
 
-	public OrderItem removeOrderItem(OrderItem orderItem) {
-		getOrderItems().remove(orderItem);
-		orderItem.setOrder(null);
+    public OrderItem addOrderItem(OrderItem orderItem) {
+        getOrderItems().add(orderItem);
+        orderItem.setOrder(this);
 
-		return orderItem;
-	}
+        return orderItem;
+    }
 
-	public User getUser() {
-		return this.user;
-	}
+    public OrderItem removeOrderItem(OrderItem orderItem) {
+        getOrderItems().remove(orderItem);
+        orderItem.setOrder(null);
 
-	public void setUser(User user) {
-		this.user = user;
-	}	
+        return orderItem;
+    }
 
-	public boolean isActive() {
-		return active;
-	}
+    public User getUser() {
+        return this.user;
+    }
 
-	public void setActive(boolean active) {
-		this.active = active;
-	}
+    public void setUser(User user) {
+        this.user = user;
+    }
 
-	@Override
-	public String toString() {
-		return "Order [idOrders=" + idOrders + ", address=" + address + ", amount=" + amount + ", created=" + created
-				+ ", phone=" + phone + ", status=" + status + "]";
-	}
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public String getHashCode() {
+        return hashCode;
+    }
+
+    public void setHashCode(String hashCode) {
+        this.hashCode = hashCode;
+    }
+
+    @Override
+    public String toString() {
+        return "Order [idOrders=" + idOrders + ", address=" + address + ", amount=" + amount + ", created=" + created
+                + ", phone=" + phone + ", status=" + status + ", hashCode=" + hashCode + "]";
+    }
 }

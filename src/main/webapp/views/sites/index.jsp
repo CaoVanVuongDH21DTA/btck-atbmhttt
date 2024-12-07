@@ -62,7 +62,7 @@ https://templatemo.com/tm-546-sixteen-clothing
 		<nav class="navbar navbar-expand-lg">
 			<div class="container">
 				<a class="navbar-brand" href="HomeServlet"><h2>
-						Công Minh <em>Beauty</em>
+						GearPro <em>NL</em>
 					</h2></a>
 				<form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" action="SearchServlet" method="post">
 					<input type="search" class="form-control form-control-dark"
@@ -81,10 +81,9 @@ https://templatemo.com/tm-546-sixteen-clothing
 							<a class="nav-link"
 							href="ProductServlet">Products</a></li>
 						<c:if test="${sessionScope.user == null }">
-							<li class="nav-item"><a class="nav-link" href="LoginServlet">Sign
-									In </a></li>
+							<li class="nav-item"><a class="nav-link" href="LoginServlet">Đăng nhập </a></li>
 							<li class="nav-item"><a class="nav-link"
-								href="Register	Servlet">Sign Up</a>
+								href="Register	Servlet">Đăng ký</a>
 						</c:if>
 						<c:if test="${sessionScope.user != null }">
 							<li class="nav-item ${flag == 'Cart' ? 'active' : '' }"><a class="nav-link" href="CartServlet">Cart
@@ -109,19 +108,19 @@ https://templatemo.com/tm-546-sixteen-clothing
 			<div class="banner-item-01">
 				<div class="text-content">
 					<h4>Best Offer</h4>
-					<h2>Công Minh Idol</h2>
+					<h2>GearPro NL</h2>
 				</div>
 			</div>
 			<div class="banner-item-02">
 				<div class="text-content">
 					<h4>Flash Deals</h4>
-					<h2>Nam Vương Poly</h2>
+					<h2>GearPro NL</h2>
 				</div>
 			</div>
 			<div class="banner-item-03">
 				<div class="text-content">
 					<h4>Last Minute</h4>
-					<h2>Chúa tể sắc đẹp</h2>
+					<h2>GearPro NL</h2>
 				</div>
 			</div>
 		</div>
@@ -138,16 +137,15 @@ https://templatemo.com/tm-546-sixteen-clothing
 			<div class="row">
 				<div class="col-md-12">
 					<div class="section-heading">
-						<h2>About Công Minh Beauty</h2>
+						<h2>About GearPro NL</h2>
 					</div>
 				</div>
 				<div class="col-md-6">
 					<div class="left-content">
-						<h4>Nam vương Công Minh</h4>
-						<p>Công Minh luôn tôn trọng khách hàng, lấy niềm vui, sự hài
+						<h4>GearPro NL</h4>
+						<p>GearPro NL luôn tôn trọng khách hàng, lấy niềm vui, sự hài
 							lòng của khách hàng để làm động lực, không ngừng tìm kiếm các sản
-							phẩm tốt nhất để mỗi khách hàng đều có thể trở nên tự tin và xinh
-							đẹp hơn.</p>
+							phẩm tốt nhất để mỗi khách hàng đều có những trải nghiệm tốt nhất với từng sản phẩm của GearPro NL</p>
 						<ul class="featured-list">
 							<li><a href="#">Khách luôn được giá ưu đãi tốt nhất</a></li>
 							<li><a href="#">Dịch vụ nhanh chóng</a></li>
@@ -171,7 +169,7 @@ https://templatemo.com/tm-546-sixteen-clothing
 			<div class="row">
 				<div class="col-md-12">
 					<div class="inner-content">
-						<p>Copyright &copy; 2020 Công Minh Beauty Co., Ltd.</p>
+						<p>Copyright &copy; 2024 GearPro NL Co., Ltd.</p>
 					</div>
 				</div>
 			</div>

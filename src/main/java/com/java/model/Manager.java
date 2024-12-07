@@ -5,7 +5,7 @@ import javax.persistence.*;
 
 
 @Entity
-@Table(name="managers")
+@Table(name="manager")
 @NamedQuery(name="Manager.findAll", query="SELECT m FROM Manager m")
 public class Manager implements Serializable {
 	private static final long serialVersionUID = 1L;

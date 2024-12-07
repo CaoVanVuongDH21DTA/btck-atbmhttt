@@ -2,13 +2,22 @@
     pageEncoding="UTF-8"%>
     <%@ taglib uri="http://java.sun.com/jstl/core_rt" prefix="c"%>
     <%@ taglib uri="http://java.sun.com/jstl/fmt_rt" prefix="fmt" %>
+    
+<style>
+  .product-item img {
+    width: 100%;  
+    height: auto; 
+    object-fit: contain;
+  }
+</style>
+    
 <div class="products">
       <div class="container">
         <div class="row">
           <div class="col-md-12">
             <div class="filters">
               <ul>
-                  <li>All Products</li>
+                  <li><a href="${pageContext.request.contextPath }/ProductServlet">All Products</a></li>
                   <c:forEach items="${listCategories }" var="item"> 
                   		<a href="${pageContext.request.contextPath }/CategoryServlet?id=${item.idCategorys}"><li>${item.name }</li></a>
                   </c:forEach>

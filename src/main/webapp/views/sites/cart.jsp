@@ -1,5 +1,19 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+
 <%@ taglib uri="http://java.sun.com/jstl/core_rt" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jstl/fmt_rt" prefix="fmt"%>
+
+<style>
+	.badge-success {
+	    background-color: #28a745; 
+	    color: white; 
+	    font-size: 14px; 
+	    padding: 4px 8px; 
+	    border-radius: 12px; 
+	    margin-right: 10px;
+	}
+</style>
 
 <div class="container pb-5 mt-n2 mt-md-n3">
 	<div class="row">
@@ -95,15 +109,15 @@
 					<span class="badge badge-success mr-2">Note</span>Detail Address
 				</h3>
 				<textarea class="form-control mb-3" name="address" rows="5" required="required"></textarea>
-				<button type="submit" class="btn btn-primary btn-block"> <svg
-						xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-						viewBox="0 0 24 24" fill="none" stroke="currentColor"
-						stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-						class="feather feather-credit-card mr-2">
-                    <rect x="1" y="4" width="22" height="16" rx="2"
-							ry="2"></rect>
-                    <line x1="1" y1="10" x2="23" y2="10"></line>
-                </svg>Proceed to Checkout
+				<button type="submit" class="btn btn-primary btn-block"> 
+				<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+				    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+				    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+				    class="feather feather-credit-card mr-2" style="margin-right: 10px">
+				    <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+				    <line x1="1" y1="10" x2="23" y2="10"></line>
+				</svg>
+					Tiến hành thanh toán
 				</button>
 			</form>
 		</div>

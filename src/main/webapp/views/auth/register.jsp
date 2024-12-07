@@ -10,6 +10,13 @@
 <script type="application/x-javascript">
 	 addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } 
 </script>
+
+<script>
+    function togglePublicKeyField() {
+        const publicKeyField = document.getElementById("publicKeyField");
+        publicKeyField.style.display = publicKeyField.style.display === "none" ? "block" : "none";
+    }
+</script>
 <!-- web font -->
 <link
 	href="//fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i"
@@ -709,32 +716,42 @@ border-left-color
 					<label class="form-check-label" for="inlineRadio1">Email</label>
 					 <input
 							class="text email" type="email" name="email" placeholder="Email">
-					<label class="form-check-label" for="inlineRadio1">Password</label> 
+					<label class="form-check-label" for="inlineRadio1">Mật khẩu</label> 
 					<input class="text mb-3" type="password"
 							name="password" placeholder="Password">
 					<div class="form-check form-check-inline">
 						<input class="form-check-input" type="radio"
 							name="gender" value="Male">
-						<label class="form-check-label" for="inlineRadio1">Male</label>
+						<label class="form-check-label" for="inlineRadio1">Trai</label>
 					</div>
 					<div class="form-check form-check-inline">
 						<input class="form-check-input" type="radio"
 							name="gender" value="Female">
-						<label class="form-check-label" for="inlineRadio1">Female</label>
+						<label class="form-check-label" for="inlineRadio1">Gái</label>
 					</div>
 					<div class="form-check form-check-inline mb-3">
 						<input class="form-check-input" type="radio"
 							name="gender" value="Other">
-						<label class="form-check-label" for="inlineRadio1">Other</label>
+						<label class="form-check-label" for="inlineRadio1">Bê đê</label>
 					</div>
 					<div class="wthree-text">
 						<label class="anim"> <input type="checkbox"
-							class="checkbox" required=""> <span>I Agree To The
-								Terms & Conditions</span>
+							class="checkbox" required=""> <span>Tôi đồng ý với các điều khoản và điều kiện</span>
 						</label>
 						<div class="clear"></div>
 					</div>
-					<input type="submit" value="SIGNUP">
+					
+					<!-- Thêm checkbox để kiểm tra publicKey -->
+        			<label>
+            		<input type="checkbox" id="hasPublicKey" onclick="togglePublicKeyField()"> Tôi đã có khóa công khai
+        	</label>
+        
+		        <!-- Trường nhập publicKey (ẩn mặc định) -->
+		        <div id="publicKeyField" style="display: none;">
+		            <label>Public Key:</label>
+		            <input class="text" type="text" name="publicKey" />
+		        </div>
+					<input type="submit" value="Đăng ký tài khoản">
 				</form>
 				<p>
 					Have an Account? <a href="/btck-atbmhttt/LoginServlet"> Login
@@ -742,10 +759,7 @@ border-left-color
 				</p>
 			</div>
 		</div>
-		<!-- copyright -->
-		<div class="colorlibcopy-agile">
-			<p>© 1996 Nam Vương Polytechnic Công Minh Idol</p>
-		</div>
+		
 		<!-- //copyright -->
 		<ul class="colorlib-bubbles">
 			<li>Cao Văn Vượng <br/> 21130253</li>

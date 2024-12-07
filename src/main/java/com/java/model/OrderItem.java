@@ -70,6 +70,7 @@ public class OrderItem implements Serializable {
 	public void setProduct(Product product) {
 		this.product = product;
 	}
+	
 
 	@Override
 	public String toString() {

@@ -3,6 +3,8 @@
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd">
     <persistence-unit name="btck-atbmhttt" transaction-type="RESOURCE_LOCAL">
+        
+        <!-- Các lớp entity của bạn -->
         <class>com.java.model.Brand</class>
         <class>com.java.model.CartItem</class>
         <class>com.java.model.Category</class>
@@ -13,5 +15,8 @@
         <class>com.java.model.Product</class>
         <class>com.java.model.Review</class>
         <class>com.java.model.User</class>
+
+   
+     
     </persistence-unit>
 </persistence>

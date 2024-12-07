@@ -33,6 +33,28 @@ public class OrderItemDAO extends EntityDAO<OrderItem> {
 		return null;
 	}
 	
+	public void insertByOrderItem(OrderItem orderItem) {
+	    EntityManager em = null;
+	    try {
+	        em = JpaUtils.getEntityManager();
+	        em.getTransaction().begin();
+	        
+	        // Persist the orderItem
+	        em.persist(orderItem);
+	        
+	        em.getTransaction().commit();
+	    } catch (Exception e) {
+	        if (em != null) {
+	            em.getTransaction().rollback();
+	        }
+	        e.printStackTrace();
+	    } finally {
+	        if (em != null) {
+	            em.close();
+	        }
+	    }
+	}
+	
 	public void deleteByOrder(int id_order) {
 		try {
 			EntityManager em = JpaUtils.getEntityManager();

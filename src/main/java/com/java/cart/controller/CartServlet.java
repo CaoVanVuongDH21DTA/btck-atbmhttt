@@ -30,109 +30,108 @@ import com.java.utils.CookieUtils;
  */
 @WebServlet("/CartServlet")
 public class CartServlet extends HttpServlet {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * @see HttpServlet#HttpServlet()
-	 */
-	public CartServlet() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
+    /**
+     * @see HttpServlet#HttpServlet()
+     */
+    public CartServlet() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
-	 *      response)
-	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		try {
-			CookieUtils cookieUtils = new CookieUtils();
-			
-			CartItemDAO cartItemDAO = new CartItemDAO();
-			
-			Cookie c_Cart = cookieUtils.getCookie(request, "cart");
+    /**
+     * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+     *      response)
+     */
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        try {
+            CookieUtils cookieUtils = new CookieUtils();
 
-			ProductDAO productDAO = new ProductDAO();
+            CartItemDAO cartItemDAO = new CartItemDAO();
 
-			Map<Integer, Integer> map = new HashMap<Integer, Integer>();
-			
-			HttpSession session = request.getSession();
+            Cookie c_Cart = cookieUtils.getCookie(request, "cart");
 
-			User user = (User) session.getAttribute("user");
+            ProductDAO productDAO = new ProductDAO();
 
-			List<CartItem> listCartItems = cartItemDAO.getByUser(user.getIdUsers());
-			
-			if(c_Cart != null) {
-				int id = Integer.parseInt(c_Cart.getValue());
-				CartItem cartItem = new CartItem();
-				cartItem.setUser(user);
-				cartItem.setProduct(productDAO.findById(id));
-				cartItem.setQuantity(1);
-				
-				cartItemDAO.insert(cartItem);
-				map.put(id, 1);
-				
-				cookieUtils.addCookie(response, "cart", null, 0);
-			}
-			
-			for(CartItem cartItem: listCartItems) {
-				int id_item = cartItem.getProduct().getIdProducts();
-				if(!map.containsKey(id_item)) {
-					map.put(id_item, cartItem.getQuantity());
-				}else {
-					map.replace(id_item, map.get(id_item), map.get(id_item) + cartItem.getQuantity());
-				}
-			}
-			
-			Set<Integer> set = map.keySet();
+            Map<Integer, Integer> map = new HashMap<Integer, Integer>();
 
-			List<Product> listProducts = new ArrayList<Product>();
+            HttpSession session = request.getSession();
 
-			List<Integer> listQuantities = new ArrayList<Integer>();
+            User user = (User) session.getAttribute("user");
 
-			for (Integer cartItem : set) {
-				Product product = productDAO.findById(cartItem);
-				listProducts.add(product);
-				listQuantities.add(map.get(cartItem));
-			}
+            if (user != null) {
+                List<CartItem> listCartItems = cartItemDAO.getByUser(user.getIdUsers());
 
-			request.setAttribute("amount", productDAO.getAmount(listProducts, listQuantities));
+                if (c_Cart != null) {
+                    int id = Integer.parseInt(c_Cart.getValue());
+                    CartItem cartItem = new CartItem();
+                    cartItem.setUser(user);
+                    cartItem.setProduct(productDAO.findById(id));
+                    cartItem.setQuantity(1);
 
-			request.setAttribute("listProducts", listProducts);
+                    cartItemDAO.insert(cartItem);
+                    map.put(id, 1);
 
-			request.setAttribute("listQuantities", listQuantities);
+                    cookieUtils.addCookie(response, "cart", null, 0);
+                }
 
-			request.setAttribute("count", listProducts.size());
-			
-			
-			if (map.size() == 0) {
-				request.setAttribute("amount", 0);
+                for (CartItem cartItem : listCartItems) {
+                    int id_item = cartItem.getProduct().getIdProducts();
+                    if (!map.containsKey(id_item)) {
+                        map.put(id_item, cartItem.getQuantity());
+                    } else {
+                        map.replace(id_item, map.get(id_item), map.get(id_item) + cartItem.getQuantity());
+                    }
+                }
 
-				request.setAttribute("count", 0);
+                Set<Integer> set = map.keySet();
 
-				request.setAttribute("message", "Empty Cart");
-			}
-			
-			request.setAttribute("flag", "Cart");
-	
-		
-			PageInfo.routeSite(request, response, PageType.CART_PAGE);
-		} catch (Exception e) {
-			// TODO: handle exception
-			e.printStackTrace();
-		}
+                List<Product> listProducts = new ArrayList<Product>();
 
-	}
+                List<Integer> listQuantities = new ArrayList<Integer>();
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
-	 *      response)
-	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doGet(request, response);
-	}
+                for (Integer cartItem : set) {
+                    Product product = productDAO.findById(cartItem);
+                    if (product != null) {
+                        listProducts.add(product);
+                        listQuantities.add(map.get(cartItem));
+                    }
+                }
+
+                request.setAttribute("listProducts", listProducts);
+
+                request.setAttribute("listQuantities", listQuantities);
+
+                request.setAttribute("count", listProducts.size());
+
+                if (map.size() == 0) {
+                    request.setAttribute("amount", 0);
+
+                    request.setAttribute("count", 0);
+
+                    request.setAttribute("message", "Empty Cart");
+                }
+
+                request.setAttribute("flag", "Cart");
+
+                PageInfo.routeSite(request, response, PageType.CART_PAGE);
+            } 
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    /**
+     * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+     *      response)
+     */
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        doGet(request, response);
+    }
 
 }
