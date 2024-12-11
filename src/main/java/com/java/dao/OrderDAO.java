@@ -17,6 +17,7 @@ public class OrderDAO extends EntityDAO<Order> {
         super(Order.class);
     }
 
+    // Phương thức insertByOrder đã được cập nhật để lưu mã hash
     public void insertByOrder(Order order) {
         EntityManager em = null;
         try {
@@ -42,18 +43,40 @@ public class OrderDAO extends EntityDAO<Order> {
             }
         }
     }
+    
+    public List<Order> getNewOrder() {
+        List<Order> orders = new ArrayList<>();
+        EntityManager em = null;
+        try {
+            em = JpaUtils.getEntityManager();
+            
+            // Sửa lại truy vấn JPQL
+            String jpql = "SELECT o FROM Order o WHERE o.status = :status";
+            TypedQuery<Order> query = em.createQuery(jpql, Order.class);
+            query.setParameter("status", "Đã duyệt"); 
 
-    public Order getOrderByIdAndHashCode(int orderId, String hashCode) {
+            orders = query.getResultList();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (em != null) {
+                em.close();
+            }
+        }
+        return orders;
+    }
+
+    // Phương thức lấy đơn hàng theo ID
+    public Order getOrderById(int orderId) {
         EntityManager em = null;
         try {
             em = JpaUtils.getEntityManager();
 
             // Truy vấn lấy đơn hàng theo ID
-            String jpql = "SELECT o FROM Order o WHERE o.idOrders = :orderId AND o.hashCode = :hashCode";
+            String jpql = "SELECT o FROM Order o WHERE o.idOrders = :orderId";
 
             TypedQuery<Order> query = em.createQuery(jpql, Order.class);
             query.setParameter("orderId", orderId);
-            query.setParameter("hashCode", hashCode);
 
             // Trả về đơn hàng nếu có
             List<Order> result = query.getResultList();
@@ -67,9 +90,10 @@ public class OrderDAO extends EntityDAO<Order> {
                 em.close();
             }
         }
-        return null;  // Trả về null nếu không tìm thấy đơn hàng hoặc mã hash không khớp
+return null;  // Trả về null nếu không tìm thấy đơn hàng 
     }
 
+    // Phương thức lấy đơn hàng theo người dùng
     public List<Order> getByUser(int id_user) {
         try {
             EntityManager em = JpaUtils.getEntityManager();
@@ -77,6 +101,7 @@ public class OrderDAO extends EntityDAO<Order> {
             String jpql = "SELECT o FROM Order o WHERE o.user.idUsers = :id AND o.active = true";
 
             TypedQuery<Order> query = em.createQuery(jpql, Order.class);
+
             query.setParameter("id", id_user);
 
             return query.getResultList();
@@ -86,6 +111,7 @@ public class OrderDAO extends EntityDAO<Order> {
         return null;
     }
 
+    // Phương thức lấy đơn hàng theo trạng thái
     public List<Order> getByStatus(List<String> statuses) {
         try {
             EntityManager em = JpaUtils.getEntityManager();
@@ -101,6 +127,7 @@ public class OrderDAO extends EntityDAO<Order> {
         return null;
     }
 
+    // Phương thức lấy các đơn hàng đang hoạt động
     public List<Order> getActive() {
         try {
             EntityManager em = JpaUtils.getEntityManager();
@@ -114,6 +141,7 @@ public class OrderDAO extends EntityDAO<Order> {
         return null;
     }
 
+    // Phương thức xác nhận đơn hàng
     public void updateOrderStatus(int orderId, String newStatus) {
         EntityManager em = null;
         try {
@@ -140,7 +168,7 @@ public class OrderDAO extends EntityDAO<Order> {
             }
         }
     }
-
+    
     public void updateOrderHash(Order order) {
         EntityManager em = null;
         try {
@@ -153,6 +181,35 @@ public class OrderDAO extends EntityDAO<Order> {
                 // Cập nhật mã hash
                 existingOrder.setHashCode(order.getHashCode());
                 em.merge(existingOrder);
+            }
+em.getTransaction().commit();
+        } catch (Exception e) {
+            if (em != null) {
+                em.getTransaction().rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            if (em != null) {
+                em.close();
+            }
+        }
+    }
+    
+    public void updateOrderAddressAndPhone(int orderId, String newAddress, String newPhone) {
+        EntityManager em = null;
+        try {
+            em = JpaUtils.getEntityManager();
+            em.getTransaction().begin();
+
+            Order order = em.find(Order.class, orderId);
+            if (order != null) {
+                if (newAddress != null && !newAddress.trim().isEmpty()) {
+                    order.setAddress(newAddress);
+                }
+                if (newPhone != null && !newPhone.trim().isEmpty()) {
+                    order.setPhone(newPhone);
+                }
+                em.merge(order);  // Cập nhật lại đối tượng order
             }
 
             em.getTransaction().commit();
@@ -167,14 +224,59 @@ public class OrderDAO extends EntityDAO<Order> {
             }
         }
     }
+    
+//    Phương thức kiểm tra nội dung thay đổi
+    public boolean updateOrderDetails(int orderId, String address, String phone) {
+        EntityManager em = null;
+        try {
+            em = JpaUtils.getEntityManager();
+            em.getTransaction().begin();
 
+            // Tìm kiếm đơn hàng theo ID
+            Order order = em.find(Order.class, orderId);
+            if (order != null) {
+                // Cập nhật thông tin đơn hàng
+                if (address != null && !address.trim().isEmpty()) {
+                    order.setAddress(address);
+                }
+                if (phone != null && !phone.trim().isEmpty()) {
+                    order.setPhone(phone);
+                }
+                em.merge(order); 
+                em.getTransaction().commit();
+                return true; // Cập nhật thành công
+            } else {
+                em.getTransaction().rollback();
+                return false; 
+            }
+        } catch (Exception e) {
+            if (em != null && em.getTransaction().isActive()) {
+                em.getTransaction().rollback(); 
+            }
+            e.printStackTrace();
+            return false; 
+        } finally {
+            if (em != null) {
+                em.close(); 
+            }
+        }
+    }	
+    
     public List<Order> getRecentOrders(int seconds) {
         EntityManager em = JpaUtils.getEntityManager();
         try {
-            // Trả về danh sách tất cả các đơn hàng
-            String jpql = "SELECT o FROM Order o";
-            List<Order> result = em.createQuery(jpql, Order.class).getResultList();
-            return result.isEmpty() ? new ArrayList<>() : result;
+            // Lấy thời gian hiện tại
+            Date now = new Date();
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(now);
+            calendar.add(Calendar.SECOND, -seconds);
+            Date recentTime = calendar.getTime();
+
+            // Truy vấn đơn hàng được tạo gần đây
+            String jpql = "SELECT o FROM Order o WHERE o.created >= :recentTime";
+            return em.createQuery(jpql, Order.class)
+                     .setParameter("recentTime", recentTime)
+                     .getResultList();
         } catch (Exception e) {
             e.printStackTrace();
             return new ArrayList<>();
@@ -182,6 +284,7 @@ public class OrderDAO extends EntityDAO<Order> {
             em.close();
         }
     }
+
     // Main method for testing
     public static void main(String[] args) {
         List<Order> listOrders = new OrderDAO().getActive();
@@ -190,5 +293,6 @@ public class OrderDAO extends EntityDAO<Order> {
             System.out.println(order.toString());
         }
     }
-}
 
+
+}

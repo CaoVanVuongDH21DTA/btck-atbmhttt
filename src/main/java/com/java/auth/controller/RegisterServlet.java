@@ -36,10 +36,10 @@ public class RegisterServlet extends HttpServlet {
             BeanUtils.populate(user, request.getParameterMap());
             
             // Kiểm tra người dùng có chọn ô "Tôi đã có publicKey" không
-            String hasPublicKey = request.getParameter("hasPublicKey");
+            String havePublicKey = request.getParameter("hasPublicKey");
             String userKey = request.getParameter("publicKey"); // Nhận publicKey từ request
 
-            if ("on".equalsIgnoreCase(hasPublicKey) && userKey != null && !userKey.trim().isEmpty()) {
+            if ("on".equalsIgnoreCase(havePublicKey) && userKey != null && !userKey.trim().isEmpty()) {
                 // Người dùng đã cung cấp publicKey
                 user.setKey(userKey); // Lưu vào cơ sở dữ liệu
             } else {
@@ -51,7 +51,7 @@ public class RegisterServlet extends HttpServlet {
 
                 // Gửi email chứa privateKey
                 try {
-                    emailService.sendPrivateKeyEmail(user.getEmail(), generatedPrivateKey);
+                    emailService.sendKey(userKey, generatedPrivateKey, generatedPublicKey);
                 } catch (Exception e) {
                     System.err.println("Đã có publicKey, không tạo private");
                 }
