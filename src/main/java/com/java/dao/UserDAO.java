@@ -127,7 +127,7 @@ public class UserDAO extends EntityDAO<User> {
             // Gửi privateKey qua email
             String base64PrivateKey = Base64.getEncoder().encodeToString(privateKey.getEncoded());
             EmailService emailService = new EmailService();
-            emailService.sendEmail(user.getEmail(), base64PrivateKey, base64PublicKey);
+            emailService.sendKey(user.getEmail(), base64PrivateKey, base64PublicKey);
 
             // Persist user vào cơ sở dữ liệu
             em.getTransaction().begin();

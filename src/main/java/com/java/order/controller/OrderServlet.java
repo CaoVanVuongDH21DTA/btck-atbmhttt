@@ -70,7 +70,6 @@ public class OrderServlet extends HttpServlet {
 
             // Lấy Order từ cơ sở dữ liệu
             OrderDAO orderDAO = new OrderDAO();
-            EmailService emailService = new EmailService();
 
             // Tìm đơn hàng theo ID
             Order order = orderDAO.findById(orderId);
@@ -87,32 +86,13 @@ public class OrderServlet extends HttpServlet {
                 return;
             }
 
-            // Sau khi lưu thay đổi, gửi email xác nhận
-            String confirmationLink = "http://localhost:8080/btck-atbmhttt/OrderVerificationServlet?orderId=" 
-                                       + orderId + "&confirmation=yes";
-            String deleteLink = "http://localhost:8080/btck-atbmhttt/OrderVerificationServlet?orderId=" 
-                                + orderId + "&confirmation=delete";
+            // Sau khi lưu thay đổi, trả về thông báo và tải lại trang
+            response.getWriter().write("Đã cập nhật trạng thái đơn hàng thành công.");
+            response.sendRedirect("OrderServlet"); // Tải lại trang đơn hàng
 
-            String emailContent = "<h1>Xác nhận thay đổi trạng thái đơn hàng</h1>"
-                    + "<p>Thông tin đơn hàng của bạn đã được cập nhật:</p>"
-                    + "<ul>"
-                    + "<li><b>Mã đơn hàng:</b> " + orderId + "</li>"
-                    + "<li><b>Địa chỉ:</b> " + address + "</li>"
-                    + "<li><b>Số điện thoại:</b> " + phone + "</li>"
-                    + "</ul>"
-                    + "<p>Nếu bạn đúng là người thay đổi vui click vào link dưới đây để xác nhận.</p>"
-                    +"<a href=\"" + confirmationLink + "\">Đúng là tôi</a>"
-                    + "<p>Nếu không phải bạn vui lòng click vào link dưới đây để xóa đơn hàng ngay lập tức</p>"
-                    + "<a href=\"" + deleteLink + "\">Không phải tôi</a>";
-
-            try {
-                String customerEmail = order.getUser().getEmail();
-                emailService.sendEmail(customerEmail, "Xác nhận thay đổi đơn hàng", emailContent);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
         } catch (Exception e) {
             e.printStackTrace();
+            response.getWriter().write("Lỗi khi cập nhật trạng thái đơn hàng: " + e.getMessage());
         }
     }
 }

@@ -8,8 +8,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.java.common.PageInfo;
-import com.java.common.PageType;
 import com.java.dao.OrderDAO;
 import com.java.model.Order;
 
@@ -34,7 +32,7 @@ public class OrderVerificationServlet extends HttpServlet {
             int orderId = Integer.parseInt(request.getParameter("orderId"));
             String confirmation = request.getParameter("confirmation");
 
-            // Tạo đối tượng OrderDAO và tìm đơn hàng theo orderId và hashCode
+            // Tạo đối tượng OrderDAO và tìm đơn hàng theo orderId
             OrderDAO orderDAO = new OrderDAO();
             Order order = orderDAO.getOrderById(orderId);
 
@@ -62,7 +60,7 @@ public class OrderVerificationServlet extends HttpServlet {
 
                 // Lưu các thay đổi vào cơ sở dữ liệu
                 orderDAO.updateOrderStatus(orderId, newStatus);
-                orderDAO.updateOrderAddressAndPhone(orderId, newAddress, newPhone);
+                orderDAO.updateOrderDetails(orderId, newAddress, newPhone);
 
                 response.getWriter().write("Đơn hàng đã được xác nhận và trạng thái đã được cập nhật.");
             } else if ("delete".equals(confirmation)) {
@@ -73,6 +71,8 @@ public class OrderVerificationServlet extends HttpServlet {
                 response.getWriter().write("Lỗi: Không có lựa chọn xác nhận hợp lệ.");
             }
 
+            // Tải lại trang đơn hàng sau khi xử lý
+            response.sendRedirect("OrderServlet");
         } catch (Exception e) {
             e.printStackTrace();
             response.getWriter().write("Lỗi khi xác nhận thay đổi trạng thái đơn hàng: " + e.getMessage());

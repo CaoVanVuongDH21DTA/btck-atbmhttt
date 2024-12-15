@@ -25,7 +25,7 @@ public class User implements Serializable {
 
     private String password;
 
-    @Column(name = "user_key") // Ánh xạ thuộc tính với cột user_key
+    @Column(name = "user_key") 
     private String key;
 
     private boolean active = true;

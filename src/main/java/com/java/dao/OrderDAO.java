@@ -182,10 +182,36 @@ return null;  // Trả về null nếu không tìm thấy đơn hàng
                 existingOrder.setHashCode(order.getHashCode());
                 em.merge(existingOrder);
             }
-em.getTransaction().commit();
+            em.getTransaction().commit();
         } catch (Exception e) {
             if (em != null) {
                 em.getTransaction().rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            if (em != null) {
+                em.close();
+            }
+        }
+    }
+    
+ // Phương thức xóa đơn hàng theo ID
+    public void deleteOrder(int orderId) {
+        EntityManager em = null;
+        try {
+            em = JpaUtils.getEntityManager();
+            em.getTransaction().begin();
+
+            // Tìm kiếm đơn hàng theo ID
+            Order order = em.find(Order.class, orderId);
+            if (order != null) {
+                em.remove(order);  // Xóa đơn hàng
+            }
+
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            if (em != null) {
+                em.getTransaction().rollback();  // Rollback nếu có lỗi
             }
             e.printStackTrace();
         } finally {
