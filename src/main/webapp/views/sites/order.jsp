@@ -3,36 +3,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jstl/fmt_rt" prefix="fmt" %>
 
-<script type="text/javascript">
-    // Hiển thị thông báo (alert) cho người dùng
-    function showAlert(message) {
-        alert(message);
-    }
-
-    // Tự động ẩn thông báo sau 2 giây
-    function hideAlertAfterTimeout() {
-        const alertElement = document.getElementById("alertMessage");
-        if (alertElement) {
-            setTimeout(() => {
-                alertElement.style.display = "none"; // Ẩn thông báo
-            }, 2000); // 2 giây (2000 milliseconds)
-        }
-    }
-
-    // Gọi hàm tự động ẩn thông báo khi tải trang
-    window.onload = hideAlertAfterTimeout;
-</script>
-
 <div class="container mt-5">
     <div class="d-flex justify-content-center row">
         <div class="col-md-10">
-            <!-- Thông báo -->
-            <c:if test="${not empty message}">
-                <div id="alertMessage" class="alert alert-success" role="alert">
-                    ${message}
-                </div>
-            </c:if>
-
             <!-- Bảng danh sách đơn hàng -->
             <div class="rounded">
                 <div class="table-responsive table-borderless">
@@ -66,7 +39,6 @@
                                         <c:if test="${item.status != 'Giao thanh cong'}">
                                             <a style="color: white;" order-id="${item.idOrders}" onclick="confirmCancelOrder(this.getAttribute('order-id'))" class="btn btn-danger">Cancel</a>
                                         </c:if>
-                                        <a href="digitalsignature" class="btn btn-success">Ký hợp đồng</a>
                                     </td>
                                 </tr>
                             </c:forEach>
@@ -76,9 +48,11 @@
             </div>
             
             
-            <!-- Nút hiển thị các chức năng -->
-            <button type="button" class="btn-info" onclick="toggleForm('confirmOrderForm')">Xác nhận đơn hàng</button>
-            <button type="button" class="btn-change" onclick="toggleForm('editOrderForm')">Chỉnh sửa đơn hàng</button>
+            <!-- Nút hiển thị các chức năng hỗ trợ đơn hàng -->
+				<button type="button" class="btn-info" onclick="toggleForm('confirmOrderForm')">Xác nhận đơn hàng</button>
+				<button type="button" class="btn-change" onclick="toggleForm('editOrderForm')">Chỉnh sửa đơn hàng</button>
+				<button type="button" class="btn-sign" onclick="toggleForm('signContractForm')">Ký hợp đồng</button>
+				<button type="button" class="btn-verify" onclick="toggleForm('verifySignatureForm')">Xác minh chữ ký</button>
 
 
             <!-- Form xác nhận đơn hàng -->
@@ -124,9 +98,50 @@
             
             </div>
             
+            <!-- Form Ký Hợp Đồng -->
+				<div id="signContractForm" style="display: none;">
+				    <form action="digitalsignature" method="post" enctype="multipart/form-data">
+				        <div class="mb-3">
+				            <label for="file" class="form-label">Chọn tệp cần ký:</label>
+				            <input type="file" class="form-control" name="file" id="file" required>
+				        </div>
+				
+				        <div class="mb-3">
+				            <label for="privateKey" class="form-label">Nhập Private Key:</label>
+				            <input type="text" class="form-control" name="privateKey" id="privateKey" required>
+				        </div>
+				
+				        <input type="hidden" name="action" value="sign">
+				        <button type="submit" class="btn btn-success">Ký chữ ký điện tử</button>
+				    </form>
+				</div>
+
+			<!-- Form Xác Minh Chữ Ký -->
+				<div id="verifySignatureForm" style="display: none;">
+			    <form action="digitalsignature" method="post" enctype="multipart/form-data">
+			        <div class="mb-3">
+			            <label for="originalFilePath" class="form-label">Chọn tệp gốc</label>
+			            <input type="file" class="form-control" id="originalFilePath" name="originalFilePath" required>
+			        </div>
+			
+			        <div class="mb-3">
+			            <label for="signedFilePath" class="form-label">Chọn tệp đã ký</label>
+			            <input type="file" class="form-control" id="signedFilePath" name="signedFilePath" required>
+			        </div>
+			
+			        <div class="mb-3">
+			            <label for="publicKey" class="form-label">Nhập Public Key (Base64)</label>
+			            <input type="text" class="form-control" id="publicKey" name="publicKey" required>
+			        </div>
+			
+			        <input type="hidden" name="action" value="verify">
+			        <button type="submit" class="btn btn-primary">Xác Minh Chữ Ký</button>
+			    </form>
+			</div>
+            
             
             <style>
-		     .btn-change, .btn-info {
+		     .btn-change, .btn-info, .btn-sign, .btn-verify {
 		        background-color: aqua;
 		        color: black; 
 		        border: none;
@@ -136,7 +151,7 @@
 		        margin: 5px;
 		    }
 		
-		    .btn-change:hover, .btn-info:hover {
+		    .btn-change:hover, .btn-info:hover, .btn-sign:hover, .btn-verify:hover {
 		        background-color: #00ced1; 
 		        color: white; 
     	}
@@ -144,17 +159,19 @@
 				</style>
             
             <!-- Hàm ẩn hiện các chức năng support đơn hàng -->
-            <script>
-            function toggleForm(formId) {
-                const formElement = document.getElementById(formId);
-                if (formElement.style.display === "none" || formElement.style.display === "") {
-                    formElement.style.display = "block"; // Hiển thị form
-                } else {
-                    formElement.style.display = "none"; // Ẩn form
-                }
-            }
-            
-            </script>
+				<script>
+				    function toggleForm(formId) {
+				        const forms = ['confirmOrderForm', 'editOrderForm', 'signContractForm', 'verifySignatureForm'];
+				        forms.forEach(id => {
+				            const form = document.getElementById(id);
+				            if (formId === id) {
+				                form.style.display = (form.style.display === "none" || form.style.display === "") ? "block" : "none";
+				            } else {
+				                form.style.display = "none"; // Ẩn các form khác
+				            }
+				        });
+				    }
+				</script>
             
           
 

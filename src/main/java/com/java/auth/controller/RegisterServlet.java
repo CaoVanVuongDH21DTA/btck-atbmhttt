@@ -30,7 +30,7 @@ public class RegisterServlet extends HttpServlet {
             throws ServletException, IOException {
         try {
             UserDAO userDAO = new UserDAO();
-            EmailService emailService = new EmailService(); // Khởi tạo dịch vụ gửi email
+            EmailService emailService = new EmailService(); 
             
             User user = new User();
             BeanUtils.populate(user, request.getParameterMap());

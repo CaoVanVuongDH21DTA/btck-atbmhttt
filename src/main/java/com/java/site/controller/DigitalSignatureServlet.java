@@ -8,53 +8,42 @@ import javax.servlet.http.*;
 import java.io.*;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.*;
 import java.security.*;
 import java.security.spec.*;
 import java.util.Base64;
 
-
-import com.itextpdf.text.*;
-import com.itextpdf.text.pdf.PdfDocument;
-import com.itextpdf.text.pdf.PdfWriter;
-
+@WebServlet("/digitalsignature")
 @MultipartConfig(
     fileSizeThreshold = 1024 * 1024 * 2, // 2MB
     maxFileSize = 1024 * 1024 * 10,      // 10MB
     maxRequestSize = 1024 * 1024 * 50    // 50MB
 )
-@WebServlet("/digitalsignature")
 public class DigitalSignatureServlet extends HttpServlet {
 
     // Hiển thị trang ký hợp đồng
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // Chuyển hướng đến trang ký hợp đồng
         request.getRequestDispatcher("/views/sites/digital_signature.jsp").forward(request, response);
-        
     }
 
     // Xử lý yêu cầu POST cho việc ký và xác minh chữ ký
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    	
-    	response.setContentType("text/html; charset=UTF-8");
-    	response.setCharacterEncoding("UTF-8");
-        
-    	String action = request.getParameter("action");
+        response.setContentType("text/html; charset=UTF-8");
+        response.setCharacterEncoding("UTF-8");
+
+        String action = request.getParameter("action");
 
         if (action != null && action.equals("sign")) {
             handleSignRequest(request, response);
         } else if (action != null && action.equals("verify")) {
             handleVerifyRequest(request, response);
         } else {
-            response.getWriter().write("Action không hợp lệ.");
+            sendNotification(response, "Action không hợp lệ.", "error");
         }
     }
 
- // Xử lý yêu cầu ký chữ ký
+    // Xử lý yêu cầu ký chữ ký
     private void handleSignRequest(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        response.setContentType("application/octet-stream");
-        response.setCharacterEncoding("UTF-8");
-
         Part filePart = request.getPart("file");
         String privateKeyString = request.getParameter("privateKey");
 
@@ -83,20 +72,9 @@ public class DigitalSignatureServlet extends HttpServlet {
             // Chuyển chữ ký sang dạng Base64
             String base64Signature = Base64.getEncoder().encodeToString(signedData);
 
-            // Đặt tên file cho file ký
-            String signedFileName = filePart.getSubmittedFileName() + ".signed.txt";
+            // Gửi thông báo thành công
+            sendNotification(response, "Chữ ký đã được tạo thành công. Bạn có thể tải xuống chữ ký.", "success");
 
-            // Mã hóa tên file để hỗ trợ Unicode
-            String encodedFileName = URLEncoder.encode(signedFileName, StandardCharsets.UTF_8.toString()).replace("+", "%20");
-
-            // Đặt tiêu đề để tải file
-            response.setHeader("Content-Disposition", "attachment; filename*=UTF-8''" + encodedFileName);
-            response.setHeader("Content-Type", "application/octet-stream");
-
-            // Ghi dữ liệu chữ ký vào phản hồi
-            OutputStream outputStream = response.getOutputStream();
-            outputStream.write(base64Signature.getBytes(StandardCharsets.UTF_8));
-            outputStream.flush();
         } catch (Exception ex) {
             ex.printStackTrace();
             sendNotification(response, "Lỗi trong quá trình ký chữ ký: " + ex.getMessage(), "error");
@@ -105,9 +83,6 @@ public class DigitalSignatureServlet extends HttpServlet {
 
     // Phương thức dùng để xác minh và kiểm tra file đã ký
     private void handleVerifyRequest(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        response.setContentType("text/html; charset=UTF-8");
-        response.setCharacterEncoding("UTF-8");
-
         Part originalFilePart = request.getPart("originalFilePath");
         Part signedFilePart = request.getPart("signedFilePath");
         String publicKeyString = request.getParameter("publicKey");
@@ -156,6 +131,11 @@ public class DigitalSignatureServlet extends HttpServlet {
                 + "<div style='padding: 20px; margin: 10px; border: 1px solid " + color + "; background-color: " + color + "; color: white; border-radius: 5px;'>"
                 + message
                 + "</div>"
+                + "<script type='text/javascript'>"
+                + "setTimeout(function() {"
+                + "  window.location.href = '/btck-atbmhttt/OrderServlet';"  
+                + "}, 2000);"  // 2 giây
+                + "</script>"
                 + "</body></html>";
         response.getWriter().write(htmlResponse);
     }

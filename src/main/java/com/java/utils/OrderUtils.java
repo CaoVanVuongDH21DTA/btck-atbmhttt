@@ -6,7 +6,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
 public class OrderUtils {
-    public static String generateConfirmationHash(int orderId, String date, String secret) throws NoSuchAlgorithmException {
+    public static String generateConfirmationHash(int orderId, String date, String secret)
+    		throws NoSuchAlgorithmException {
         String data = orderId + date + secret;
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
         byte[] hash = digest.digest(data.getBytes(StandardCharsets.UTF_8));

@@ -51,7 +51,6 @@ public class ConfirmOrderServlet extends HttpServlet {
                             generateOrderPdf(order, response);
 
                             // Chuyển hướng người dùng về OrderServlet
-//                            response.sendRedirect("http://localhost:8080/btck-atbmhttt/OrderServlet");
                         } else {
                             // Nếu publicKey không trùng khớp, thông báo lỗi
                             response.getWriter().write("<html><body><h2>Public key không hợp lệ.</h2></body></html>");
@@ -72,6 +71,7 @@ public class ConfirmOrderServlet extends HttpServlet {
         }
     }
 
+    // Phương thức tạo file pdf hợp đồng
     private void generateOrderPdf(Order order, HttpServletResponse response) {
         // Đặt thông tin tiêu đề và kiểu dữ liệu trả về cho PDF
         response.setContentType("application/pdf");

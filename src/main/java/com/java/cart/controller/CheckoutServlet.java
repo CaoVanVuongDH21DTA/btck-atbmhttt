@@ -39,7 +39,6 @@ public class CheckoutServlet extends HttpServlet {
             throws ServletException, IOException {
 
         try {
-            // Ensure the response uses UTF-8 encoding
             request.setCharacterEncoding("UTF-8");
             response.setContentType("text/html; charset=UTF-8");
             response.setCharacterEncoding("UTF-8");
@@ -48,7 +47,7 @@ public class CheckoutServlet extends HttpServlet {
             User user = (User) sessionUtils.getSession(request, "user");
 
             if (user == null) {
-                response.sendRedirect("LoginServlet"); // Redirect to login if user is not logged in
+                response.sendRedirect("LoginServlet"); 
                 return;
             }
 
@@ -60,7 +59,7 @@ public class CheckoutServlet extends HttpServlet {
             List<CartItem> listCartItems = cartItemDAO.getByUser(user.getIdUsers());
 
             if (listCartItems.isEmpty()) {
-                response.sendRedirect("CartServlet"); // Redirect to cart page if no items
+                response.sendRedirect("CartServlet"); 
             } else {
                 double num_amount = 0;
                 for (CartItem cartItem : listCartItems) {
@@ -81,19 +80,16 @@ public class CheckoutServlet extends HttpServlet {
                 order.setStatus("Chờ Duyệt");
                 order.setUser(user);
 
-                // Insert order into DB
                 orderDAO.insertByOrder(order);
                 
-                // Generate hash for order confirmation
-                String secret = "Antoantuyetdoi123";
+                // Tạo mã hash để xác thực đơn hàng
+                String secret = "DaiHocNongLamCNTTHCM";
                 String confirmationHash = OrderUtils.generateConfirmationHash(order.getIdOrders(), date_current.toString(), secret);
                 order.setHashCode(confirmationHash);
 
-                // Update the order with the confirmation hash
+                // Cập nhật đơn hàng với mã hash
                 orderDAO.updateOrderHash(order);
                 
-
-                // Insert order items into DB
                 for (CartItem cartItem : listCartItems) {
                     OrderItem orderItem = new OrderItem();
                     Product current_Product = productDAO.findById(cartItem.getProduct().getIdProducts());
@@ -106,7 +102,7 @@ public class CheckoutServlet extends HttpServlet {
                     orderItemDAO.insertByOrderItem(orderItem);
                 }
 
-                // Remove items from the cart
+                // Xóa sản phẩm khỏi giỏ hàng
                 for (CartItem cartItem : listCartItems) {
                     cartItemDAO.delete(cartItem.getIdCartItem());
                 }
@@ -121,7 +117,7 @@ public class CheckoutServlet extends HttpServlet {
                 properties.put("mail.smtp.ssl.protocols", "TLSv1.2");
                 properties.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
 
-                // Fetch email credentials from environment variables
+                // Lấy thông tin xác thực email
                 String username = "gearpro.shop.2024@gmail.com";
                 String password = "jytbkuoffatojafe";
 
@@ -129,11 +125,11 @@ public class CheckoutServlet extends HttpServlet {
                     throw new IllegalArgumentException("Thiếu biến môi trường cho thông tin đăng nhập email.");
                 }
 
-                // Create session with email credentials
+                // Tạo phiên với thông tin đăng nhập email
                 Session emailSession = Session.getInstance(properties, new javax.mail.Authenticator() {
                     @Override
                     protected PasswordAuthentication getPasswordAuthentication() {
-return new PasswordAuthentication(username, password);
+                    	return new PasswordAuthentication(username, password);
                     }
                 });
 

@@ -722,17 +722,17 @@ border-left-color
 					<div class="form-check form-check-inline">
 						<input class="form-check-input" type="radio"
 							name="gender" value="Male">
-						<label class="form-check-label" for="inlineRadio1">Trai</label>
+						<label class="form-check-label" for="inlineRadio1">Nam</label>
 					</div>
 					<div class="form-check form-check-inline">
 						<input class="form-check-input" type="radio"
 							name="gender" value="Female">
-						<label class="form-check-label" for="inlineRadio1">Gái</label>
+						<label class="form-check-label" for="inlineRadio1">Nữ</label>
 					</div>
 					<div class="form-check form-check-inline mb-3">
 						<input class="form-check-input" type="radio"
 							name="gender" value="Other">
-						<label class="form-check-label" for="inlineRadio1">Bê đê</label>
+						<label class="form-check-label" for="inlineRadio1">Khác</label>
 					</div>
 					<div class="wthree-text">
 						<label class="anim"> <input type="checkbox"

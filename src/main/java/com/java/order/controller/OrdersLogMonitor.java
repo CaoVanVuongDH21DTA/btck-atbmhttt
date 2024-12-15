@@ -9,7 +9,7 @@ import java.sql.Timestamp;
 import java.util.List;
 
 public class OrdersLogMonitor {
-    private static final long CHECK_INTERVAL = 10000; 
+    private static final long CHECK_INTERVAL = 10000; // 10s
     private Timestamp lastCheckedTime = new Timestamp(System.currentTimeMillis()); 
     private final EmailService emailService = new EmailService(); 
 
@@ -29,6 +29,7 @@ public class OrdersLogMonitor {
         monitorThread.start();
     }
 
+    // Phương thức kiểm tra sự thay đổi
     private void checkForChanges() {
         EntityManager em = JpaUtils.getEntityManager();
         try {
