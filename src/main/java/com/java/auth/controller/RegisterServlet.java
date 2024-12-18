@@ -1,6 +1,12 @@
 package com.java.auth.controller;
 
 import java.io.IOException;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.util.Base64;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -30,39 +36,40 @@ public class RegisterServlet extends HttpServlet {
             throws ServletException, IOException {
         try {
             UserDAO userDAO = new UserDAO();
-            EmailService emailService = new EmailService(); 
-            
+            EmailService emailService = new EmailService();
+
             User user = new User();
             BeanUtils.populate(user, request.getParameterMap());
-            
-            // Kiểm tra người dùng có chọn ô "Tôi đã có publicKey" không
-            String havePublicKey = request.getParameter("hasPublicKey");
-            String userKey = request.getParameter("publicKey"); // Nhận publicKey từ request
 
-            if ("on".equalsIgnoreCase(havePublicKey) && userKey != null && !userKey.trim().isEmpty()) {
-                // Người dùng đã cung cấp publicKey
-                user.setKey(userKey); // Lưu vào cơ sở dữ liệu
+            // Kiểm tra xem người dùng có chọn "Tôi đã có publicKey" không
+            String hasPublicKey = request.getParameter("hasPublicKey");
+            String userKey = request.getParameter("publicKey");
+
+            if ("on".equalsIgnoreCase(hasPublicKey) && userKey != null && !userKey.trim().isEmpty()) {
+                // Người dùng đã cung cấp publicKey => chỉ lưu vào cơ sở dữ liệu
+                user.setKey(userKey);
+                emailService.sendConfirmationEmail(user.getEmail(),  userKey);
             } else {
-                // Tạo publicKey và privateKey nếu không có publicKey từ người dùng
-                String generatedPublicKey = java.util.UUID.randomUUID().toString();
-                String generatedPrivateKey = java.util.UUID.randomUUID().toString();
+                // Người dùng không cung cấp publicKey => tạo mới public và private key
+            	KeyPair keyPair = generateKeyPair();
+            	PublicKey publicKey = keyPair.getPublic();
+            	PrivateKey privateKey = keyPair.getPrivate();
+            	
+            	String base64PublicKey = Base64.getEncoder().encodeToString(publicKey.getEncoded());
 
-                user.setKey(generatedPublicKey); // Lưu publicKey vào cơ sở dữ liệu
+            	user.setKey(base64PublicKey);
 
-                // Gửi email chứa privateKey
-                try {
-                    emailService.sendKey(userKey, generatedPrivateKey, generatedPublicKey);
-                } catch (Exception e) {
-                    System.err.println("Đã có publicKey, không tạo private");
-                }
+            	 // Gửi privateKey qua email
+              String base64PrivateKey = Base64.getEncoder().encodeToString(privateKey.getEncoded());
+              EmailService emailService1 = new EmailService();
+              emailService1.sendKey(user.getEmail(), base64PrivateKey, base64PublicKey);
             }
 
-            // Kiểm tra xem User đã hợp lệ chưa
+            // Kiểm tra tính hợp lệ của người dùng
             String message = userDAO.getMessage(user);
 
             if (message == null) {
                 userDAO.registerUser(user); // Đăng ký người dùng
-                
                 request.setAttribute("message", "Register successfully!");
                 request.getRequestDispatcher("/views/auth/login.jsp").forward(request, response);
             } else {
@@ -74,5 +81,11 @@ public class RegisterServlet extends HttpServlet {
             request.setAttribute("message", "Register failed!");
             doGet(request, response);
         }
+    }
+
+	private KeyPair generateKeyPair() throws Exception {
+        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+        keyGen.initialize(2048);
+        return keyGen.generateKeyPair();
     }
 }

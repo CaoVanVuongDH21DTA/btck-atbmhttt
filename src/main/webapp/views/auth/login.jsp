@@ -722,7 +722,7 @@ border-left-color
 		<h1>SignIn Form</h1>
 		<div class="main-agileinfo">
 			<div class="agileits-top">
-				<form action="/btck-atbmhttt/LoginServlet" method="post">
+				<form action="LoginServlet" method="post">
 				<c:if test="${ not empty message}">
 					<div class="alert alert-danger" role="alert">
 					  ${message }

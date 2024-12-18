@@ -44,6 +44,8 @@ public class OrderDAO extends EntityDAO<Order> {
         }
     }
     
+    
+    
     public List<Order> getNewOrder() {
         List<Order> orders = new ArrayList<>();
         EntityManager em = null;

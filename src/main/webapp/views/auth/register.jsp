@@ -741,16 +741,16 @@ border-left-color
 						<div class="clear"></div>
 					</div>
 					
-					<!-- Thêm checkbox để kiểm tra publicKey -->
-        			<label>
-            		<input type="checkbox" id="hasPublicKey" onclick="togglePublicKeyField()"> Tôi đã có khóa công khai
-        	</label>
-        
-		        <!-- Trường nhập publicKey (ẩn mặc định) -->
-		        <div id="publicKeyField" style="display: none;">
-		            <label>Public Key:</label>
-		            <input class="text" type="text" name="publicKey" />
-		        </div>
+					<!-- Thêm checkbox để kiểm tra publicKey -->						
+						    <label>
+						        <input type="checkbox" name="hasPublicKey" value='on' onclick="togglePublicKeyField()"> Tôi đã có khóa công khai
+						    </label>
+						
+						    <div id="publicKeyField" style="display: none;">
+						        <label>Public Key:</label>
+						        <input type="text" name="publicKey" id="publicKey" />
+						    </div>
+				
 					<input type="submit" value="Đăng ký tài khoản">
 				</form>
 				<p>

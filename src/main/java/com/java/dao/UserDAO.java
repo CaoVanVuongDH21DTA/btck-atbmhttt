@@ -114,20 +114,20 @@ public class UserDAO extends EntityDAO<User> {
             user.setPassword(hashedPassword);
 
             // Tạo cặp khóa RSA
-            KeyPair keyPair = generateKeyPair();
-            PublicKey publicKey = keyPair.getPublic();
-            PrivateKey privateKey = keyPair.getPrivate();
+//            KeyPair keyPair = generateKeyPair();
+//            PublicKey publicKey = keyPair.getPublic();
+//            PrivateKey privateKey = keyPair.getPrivate();
 
             // Mã hóa publicKey thành chuỗi base64
-            String base64PublicKey = Base64.getEncoder().encodeToString(publicKey.getEncoded());
+//            String base64PublicKey = Base64.getEncoder().encodeToString(publicKey.getEncoded());
 
             // Lưu publicKey vào cơ sở dữ liệu (dưới dạng base64)
-            user.setKey(base64PublicKey);
+//            user.setKey(base64PublicKey);
 
             // Gửi privateKey qua email
-            String base64PrivateKey = Base64.getEncoder().encodeToString(privateKey.getEncoded());
-            EmailService emailService = new EmailService();
-            emailService.sendKey(user.getEmail(), base64PrivateKey, base64PublicKey);
+//            String base64PrivateKey = Base64.getEncoder().encodeToString(privateKey.getEncoded());
+//            EmailService emailService = new EmailService();
+//            emailService.sendKey(user.getEmail(), base64PrivateKey, base64PublicKey);
 
             // Persist user vào cơ sở dữ liệu
             em.getTransaction().begin();
