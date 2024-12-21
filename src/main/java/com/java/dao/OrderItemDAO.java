@@ -37,7 +37,6 @@ public class OrderItemDAO extends EntityDAO<OrderItem> {
 	    }
 	}
 
-
 	public List<OrderItem> getByOrder(int id_order){
 		try {
 			EntityManager em = JpaUtils.getEntityManager();

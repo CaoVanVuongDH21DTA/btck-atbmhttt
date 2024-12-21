@@ -28,6 +28,7 @@ import com.java.model.User;
 import com.java.model.Order;
 import com.java.model.OrderItem;
 import com.java.model.Product;
+import com.java.utils.OrderUtils;
 import com.java.utils.SessionUtils;
 
 @WebServlet("/CheckoutServlet")
@@ -39,13 +40,17 @@ public class CheckoutServlet extends HttpServlet {
 
         try {
             // Ensure the response uses UTF-8 encoding
-        	request.setCharacterEncoding("UTF-8");
+            request.setCharacterEncoding("UTF-8");
             response.setContentType("text/html; charset=UTF-8");
             response.setCharacterEncoding("UTF-8");
 
             SessionUtils sessionUtils = new SessionUtils();
-
             User user = (User) sessionUtils.getSession(request, "user");
+
+            if (user == null) {
+                response.sendRedirect("LoginServlet"); // Redirect to login if user is not logged in
+                return;
+            }
 
             OrderDAO orderDAO = new OrderDAO();
             OrderItemDAO orderItemDAO = new OrderItemDAO();
@@ -54,13 +59,12 @@ public class CheckoutServlet extends HttpServlet {
 
             List<CartItem> listCartItems = cartItemDAO.getByUser(user.getIdUsers());
 
-            if (listCartItems.size() == 0) {
-                response.sendRedirect("CartServlet");
+            if (listCartItems.isEmpty()) {
+                response.sendRedirect("CartServlet"); // Redirect to cart page if no items
             } else {
                 double num_amount = 0;
                 for (CartItem cartItem : listCartItems) {
                     Product product = cartItem.getProduct();
-
                     double price = (100 - product.getDiscount().getPercent()) * product.getPrice() / 100;
                     num_amount += (price * cartItem.getQuantity());
                 }
@@ -79,6 +83,15 @@ public class CheckoutServlet extends HttpServlet {
 
                 // Insert order into DB
                 orderDAO.insertByOrder(order);
+                
+             // Generate hash for order confirmation
+                String secret = "Antoantuyetdoi123";
+                String confirmationHash = OrderUtils.generateConfirmationHash(order.getIdOrders(), date_current.toString(), secret);
+                order.setHashCode(confirmationHash);
+
+                // Update the order with the confirmation hash
+                orderDAO.updateOrderHash(order);
+                
 
                 // Insert order items into DB
                 for (CartItem cartItem : listCartItems) {
@@ -88,9 +101,7 @@ public class CheckoutServlet extends HttpServlet {
                     orderItem.setOrder(order);
                     orderItem.setQuantity(cartItem.getQuantity());
 
-                    double currrent_Price = (100 - current_Product.getDiscount().getPercent())
-                            * current_Product.getPrice() / 100;
-
+                    double currrent_Price = (100 - current_Product.getDiscount().getPercent()) * current_Product.getPrice() / 100;
                     orderItem.setPrice(currrent_Price);
                     orderItemDAO.insertByOrderItem(orderItem);
                 }
@@ -127,29 +138,26 @@ public class CheckoutServlet extends HttpServlet {
                 });
 
                 MimeMessage message = new MimeMessage(emailSession);
-
                 message.setFrom(new InternetAddress(username));
                 message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(user.getEmail()));
-
-                // Use UTF-8 encoding for subject and body
-                message.setSubject("Xác nhận đơn hàng", "UTF-8");
-//                String emailContent = "Đơn hàng có mã " + order.getIdOrders() + " được đặt thành công vào lúc " + date_current.toString();
-                String confirmationLink = "http://localhost:8080/btck-atbmhttt/confirmOrder?orderId=" + order.getIdOrders();
-                String emailContent = "Đơn hàng có mã " + order.getIdOrders() + " được đặt thành công vào lúc " + date_current.toString() + 
-                    "<br/>Vui lòng xác nhận đơn hàng tại: <a href=\"" + confirmationLink + "\">Xác nhận đơn hàng</a>";
+                message.setSubject("Mã đơn hàng");
+                
+                // Tạo nội dung email chỉ chứa mã hash
+                String emailContent = "Đơn hàng của bạn đã được đặt thành công vào lúc " + date_current.toString() +
+                    "<br/>Mã xác nhận: " + confirmationHash + " <br/> Tuyệt đối không được chia sẻ mã này cho bất kì ai";
 
                 message.setText(emailContent, "UTF-8", "html");
                 message.setReplyTo(message.getFrom());
 
                 Transport.send(message);
 
-             // Hiển thị thông báo bằng alert và chuyển hướng
+                // Hiển thị thông báo bằng alert và chuyển hướng
                 PrintWriter out = response.getWriter();
                 out.println("<html>");
                 out.println("<head>");
                 out.println("<script type=\"text/javascript\">");
                 out.println("alert('Đơn hàng đã được tạo thành công!\\nVui lòng kiểm tra email của bạn để xác nhận đơn hàng mã " + order.getIdOrders() + "');");
-                out.println("window.location.href = 'OrderServlet';"); // Chuyển hướng tới trang OrderServlet
+                out.println("window.location.href = 'OrderServlet';"); 
                 out.println("</script>");
                 out.println("</head>");
                 out.println("<body>");

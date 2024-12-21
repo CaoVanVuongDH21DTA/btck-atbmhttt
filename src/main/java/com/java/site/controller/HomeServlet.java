@@ -35,7 +35,6 @@ public class HomeServlet extends HttpServlet {
 			
 			Cookie email = cookieUtils.getCookie(request, "email");
 			
-			
 			if(email != null) {
 				User user = sessionUtils.getSession(request, "user");
 			}

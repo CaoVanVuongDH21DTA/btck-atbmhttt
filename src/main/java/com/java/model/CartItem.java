@@ -3,6 +3,8 @@ package com.java.model;
 import java.io.Serializable;
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 
 @Entity
 @Table(name="cart_items")
@@ -19,6 +21,7 @@ public class CartItem implements Serializable {
 	//bi-directional many-to-one association to Customer
 	@ManyToOne
 	@JoinColumn(name="user_id")
+	@JsonBackReference
 	private User user;
 
 	//bi-directional many-to-one association to Product

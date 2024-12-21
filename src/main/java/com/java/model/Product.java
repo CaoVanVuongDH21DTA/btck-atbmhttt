@@ -1,9 +1,10 @@
 package com.java.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+
 import javax.persistence.*;
 import java.util.List;
-
 
 @Entity
 @Table(name="products")
@@ -28,6 +29,11 @@ public class Product implements Serializable {
 	private float price;
 
 	private int view;
+	
+	private int rate;
+	
+	@Column(name = "average_star")
+    private BigDecimal averageStar;
 	
 	private boolean active = true;
 
@@ -105,6 +111,13 @@ public class Product implements Serializable {
 		return this.view;
 	}
 
+	public BigDecimal getAverageStar() {
+        return averageStar;
+    }
+
+    public void setAverageStar(BigDecimal averageStar) {
+        this.averageStar = averageStar;
+    }
 	
 	public boolean isActive() {
 		return active;
@@ -208,10 +221,19 @@ public class Product implements Serializable {
 		return review;
 	}
 
-	@Override
-	public String toString() {
-		return "Product [idProducts=" + idProducts + ", description=" + description + ", image=" + image + ", name="
-				+ name + ", price=" + price + ", view=" + view + ", active=" + active + ", brand=" + brand
-				+ ", category=" + category + ", discount=" + discount + "]";
+	public int getRate() {
+		return rate;
 	}
+
+	public void setRate(int rate) {
+		this.rate = rate;
+	}
+	
+	@Override
+    public String toString() {
+        return "Product [idProducts=" + idProducts + ", description=" + description + ", image=" + image + ", name="
+                + name + ", price=" + price + ", view=" + view + ", rate=" + rate + ", averageStar=" + averageStar 
+                + ", active=" + active + ", brand=" + brand + ", category=" + category + ", discount=" + discount + "]";
+    }
 }
+

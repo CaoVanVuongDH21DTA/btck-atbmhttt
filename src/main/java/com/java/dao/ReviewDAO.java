@@ -32,12 +32,4 @@ public class ReviewDAO extends EntityDAO<Review> {
 		}
 		return null;
 	}
-	
-	public static void main(String[] args) {
-		List<Review> list = new ReviewDAO().getByProduct(1);
-		
-		for(Review review: list) {
-			System.out.println(review.toString());
-		}
-	}
 }

@@ -727,6 +727,15 @@ border-left-color
 							name="gender" value="Other">
 						<label class="form-check-label" for="inlineRadio1">Other</label>
 					</div>
+					<label>
+            			<input type="checkbox" id="hasPublicKey" name="hasPublicKey" onclick="togglePublicKeyField()"> Tôi đã có khóa công khai
+		        	</label>
+			        <!-- Trường nhập publicKey (ẩn mặc định) -->
+			        <div id="publicKeyField" style="display: none;">
+			            <label>Key công khai:</label>
+			            <input class="text" type="text" name="publicKey" />
+			        </div>
+					
 					<div class="wthree-text">
 						<label class="anim"> <input type="checkbox"
 							class="checkbox" required=""> <span>I Agree To The
@@ -753,5 +762,12 @@ border-left-color
 		</ul>
 	</div>
 	<!-- //main -->
+	
+	<script>
+	    function togglePublicKeyField() {
+	        const publicKeyField = document.getElementById("publicKeyField");
+	        publicKeyField.style.display = publicKeyField.style.display === "none" ? "block" : "none";
+	    }
+	</script>
 </body>
 </html>

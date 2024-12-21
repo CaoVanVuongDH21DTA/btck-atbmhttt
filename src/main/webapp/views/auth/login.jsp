@@ -1,6 +1,18 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="f"%>
+
+<c:choose>
+    <c:when test="${not empty sessionScope.locale}">
+        <f:setLocale value="${sessionScope.locale}" scope="session" />
+    </c:when>
+    <c:otherwise>
+        <f:setLocale value="en" scope="session" />
+        <c:set var="locale" value="en" scope="session" />
+    </c:otherwise>
+</c:choose>
+<f:setBundle basename="com.java.lang.language" var="bundle" />
 
 <!DOCTYPE html>
 <html>
@@ -9,13 +21,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <script type="application/x-javascript">
-	
 	 addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } 
-
 </script>
-<!-- Custom Theme files -->
-<link href="css/style.css" rel="stylesheet" type="text/css" media="all" />
-<!-- //Custom Theme files -->
 <!-- web font -->
 <link
 	href="//fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i"
@@ -23,12 +30,6 @@
 <!-- //web font -->
 <style>
 
-/*--
-Author: Colorlib
-Author URL: https://colorlib.com
-License: Creative Commons Attribution 3.0 Unported
-License URL: http://creativecommons.org/licenses/by/3.0/
---*/
 /*-- reset --*/
 html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p,
 	blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn,
@@ -178,11 +179,16 @@ h1 {
 	padding: 3em;
 }
 
+.action-login{
+	display: flex; 
+	justify-content: space-between;
+}
+
 input[type="text"], input[type="email"], input[type="password"] {
 	font-size: 0.9em;
 	color: #fff;
 	font-weight: 100;
-	width: 94.5%;
+	width: 100%;
 	display: block;
 	border: none;
 	padding: 0.8em;
@@ -719,32 +725,44 @@ border-left-color
 <body>
 	<!-- main -->
 	<div class="main-w3layouts wrapper">
-		<h1>SignIn Form</h1>
+		<h1><f:message bundle="${bundle}" key="signin" /></h1>
 		<div class="main-agileinfo">
 			<div class="agileits-top">
 				<form action="/btck-atbmhttt/LoginServlet" method="post">
-				<c:if test="${ not empty message}">
-					<div class="alert alert-danger" role="alert">
-					  ${message }
+					<c:if test="${ not empty sessionScope.message}">
+						<div class="alert alert-danger " role="alert">
+						  ${sessionScope.message }
+						</div>
+						<% session.removeAttribute("message"); %>
+					</c:if>
+					<input class="text email" type="email" name="email" placeholder="Email" required=""> 
+					<input class="text mb-3" type="password" name="password" placeholder="<f:message bundle="${bundle}" key="password"/>" required="">
+					
+					<!-- Hiển thị trường nhập privateKey nếu tài khoản bị khóa và có message -->
+					<c:if test="${not empty sessionScope.lockedUser}">
+					    <input class="text" type="text" name="privateKey" placeholder="Khóa riêng tư" required="">
+						<% session.removeAttribute("lockedUser"); %>
+					</c:if>
+					
+					<div class="action-login">
+						<div class="form-check">
+							<input class="form-check-input" type="checkbox" name="remember"> 
+							<label class="form-check-label" for="flexCheckDefault"><f:message bundle="${bundle}" key="remember" /> </label>
+						</div>
+						<a href="/btck-atbmhttt/ForgotPasswordServlet" style="color: white; text-decoration: none">Quên mật khẩu</a>
 					</div>
-				</c:if>
-					<input class="text email" type="email" name="email"
-						placeholder="Email" required=""> <input class="text mb-3"
-						type="password" name="password" placeholder="Password" required="">
-					<div class="form-check">
-						<input class="form-check-input" type="checkbox"
-							name="remember"> <label class="form-check-label"
-							for="flexCheckDefault"> Remember me? </label>
-					</div>
-					<input type="submit" value="SIGNIN">
+					
+					<input type="submit" value="<f:message bundle="${bundle}" key="signin"/>">
 				</form>
 				<p>
-					Don't have an Account? <a href="/btck-atbmhttt/RegisterServlet">
-						Register Now!</a>
+					<f:message bundle="${bundle }" key="noAccount"/> 
+					<a href="/btck-atbmhttt/RegisterServlet">
+						<f:message bundle="${bundle }" key="signup"/>
+					</a>
 				</p>
 				<p>
 					<a href="/btck-atbmhttt/AdminSigninServlet">
-						Sign in as Admin!</a>
+						<f:message bundle="${bundle }" key="signin"/> Admin!</a>
 				</p>
 			</div>
 		</div>
@@ -759,5 +777,6 @@ border-left-color
 		</ul>
 	</div>
 	<!-- //main -->
+	
 </body>
 </html>

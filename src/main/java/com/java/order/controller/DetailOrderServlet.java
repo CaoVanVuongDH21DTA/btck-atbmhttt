@@ -14,24 +14,14 @@ import com.java.common.PageType;
 import com.java.dao.OrderItemDAO;
 import com.java.model.OrderItem;
 
-/**
- * Servlet implementation class DetailOrderServlet
- */
 @WebServlet("/DetailOrderServlet")
 public class DetailOrderServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
     public DetailOrderServlet() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
 			
@@ -45,16 +35,11 @@ public class DetailOrderServlet extends HttpServlet {
 			
 			PageInfo.routeSite(request, response, PageType.DETAIL_ORDER_PAGE);
 		} catch (Exception e) {
-			// TODO: handle exception
 			e.printStackTrace();
 		}
 	}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
 
