@@ -3,6 +3,18 @@
 
 <%@ taglib uri="http://java.sun.com/jstl/core_rt" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jstl/fmt_rt" prefix="fmt"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="f"%>
+
+<c:choose>
+    <c:when test="${not empty sessionScope.locale}">
+        <f:setLocale value="${sessionScope.locale}" scope="session" />
+    </c:when>
+    <c:otherwise>
+        <f:setLocale value="en" scope="session" />
+        <c:set var="locale" value="en" scope="session" />
+    </c:otherwise>
+</c:choose>
+<f:setBundle basename="com.java.lang.language" var="bundle" />
 
 <style>
 	.badge-success {
@@ -20,13 +32,13 @@
 		<div class="col-xl-9 col-md-8">
 			<h2
 				class="h6 d-flex flex-wrap justify-content-between align-items-center px-4 py-3 bg-secondary">
-				<span>Products</span><a class="font-size-sm" href="ProductServlet"><svg
+				<span><f:message bundle="${bundle}" key="product"/></span><a class="font-size-sm" href="ProductServlet"><svg
 						xmlns="http://www.w3.org/2000/svg" width="24" height="24"
 						viewBox="0 0 24 24" fill="none" stroke="currentColor"
 						stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
 						class="feather feather-chevron-left"
 						style="width: 1rem; height: 1rem;">
-						<polyline points="15 18 9 12 15 6"></polyline></svg>Continue shopping</a>
+						<polyline points="15 18 9 12 15 6"></polyline></svg><f:message bundle="${bundle }" key="continue_product"/></a>
 			</h2>
 			<!-- Item-->
 			<c:if test="${count > 0 }">
@@ -55,7 +67,7 @@
 								class="pt-2 pt-sm-0 pl-sm-3 mx-auto mx-sm-0 text-center text-sm-left"
 								style="max-width: 10rem;">
 								<div class="form-group mb-2">
-									<label for="quantity1">Quantity</label> <input
+									<label for="quantity1"><f:message bundle="${bundle }" key="quantity"/></label> <input
 										class="form-control form-control-sm" type="number"
 										name="quantity" onblur="this.form.submit()" min="1"
 										value="${listQuantities.get(i) }">
@@ -72,8 +84,8 @@
 											d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
 				                            <line x1="10" y1="11" x2="10" y2="17"></line>
 				                            <line x1="14" y1="11" x2="14" y2="17"></line>
-				                        </svg>Remove
-								</a> <label for="">Total</label>
+				                        </svg><f:message bundle="${bundle }" key="remove"/>
+								</a>
 								<div class="font-size-lg text-primary pt-2">
 									<fmt:formatNumber
 										value="${listProducts.get(i).price * (100 - listProducts.get(i).discount.percent) / 100 * listQuantities.get(i)}"
@@ -92,7 +104,7 @@
 		<!-- Sidebar-->
 		<div class="col-xl-3 col-md-4 pt-3 pt-md-0">
 			<form action="CheckoutServlet" method="post">
-				<h2 class="h6 px-4 py-3 bg-secondary text-center">Subtotal</h2>
+				<h2 class="h6 px-4 py-3 bg-secondary text-center"><f:message bundle="${bundle }" key="total"/></h2>
 				<div class="h3 font-weight-semibold text-center py-3">
 					<fmt:formatNumber value="${amount}" pattern="#,###"></fmt:formatNumber>
 					VND 
@@ -102,11 +114,11 @@
 					<div class="alert alert-danger" role="alert">${error }</div>
 				</c:if>
 				<h3 class="h6 pt-4 font-weight-semibold">
-					<span class="badge badge-success mr-2">Note</span>Phone Number
+					<span class="badge badge-success mr-2">Note</span><f:message bundle="${bundle }" key="phoneNumber"/>
 				</h3>
 				<input type="text" class="form-control mb-3" name="phone" required="required"/>
 				<h3 class="h6 pt-4 font-weight-semibold">
-					<span class="badge badge-success mr-2">Note</span>Detail Address
+					<span class="badge badge-success mr-2">Note</span><f:message bundle="${bundle }" key="address"/>
 				</h3>
 				<textarea class="form-control mb-3" name="address" rows="5" required="required"></textarea>
 				<button type="submit" class="btn btn-primary btn-block"> 
@@ -117,7 +129,7 @@
 				    <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
 				    <line x1="1" y1="10" x2="23" y2="10"></line>
 				</svg>
-					Proceed to Checkout
+					<f:message bundle="${bundle }" key="continue_pay"/>
 				</button>
 			</form>
 		</div>

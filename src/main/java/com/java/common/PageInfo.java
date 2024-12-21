@@ -13,7 +13,6 @@ public class PageInfo {
 	private String contentUrl;
 	private String scriptUrl;
 	
-	
 	public PageInfo() {
 		super();
 	}
@@ -57,13 +56,29 @@ public class PageInfo {
 	private static Map<PageType, PageInfo> map = new HashMap<PageType, PageInfo>();
 	
 	static {
-//		public
+		//public
 		map.put(PageType.HOME_PAGE, new PageInfo("Home Page", "/views/sites/home.jsp", ""));
 		map.put(PageType.PRODUCT_PAGE, new PageInfo("Product Page", "/views/sites/product.jsp", ""));
 		map.put(PageType.CART_PAGE, new PageInfo("Cart Page", "/views/sites/cart.jsp", ""));
 		map.put(PageType.ORDER_PAGE, new PageInfo("Order Page", "/views/sites/order.jsp", ""));
+		map.put(PageType.HELP_PAGE, new PageInfo("Help Page", "/views/sites/help.jsp", ""));
 		map.put(PageType.DETAIL_ORDER_PAGE, new PageInfo("Detail Order Page", "/views/sites/detail-order.jsp", ""));
 		map.put(PageType.DETAIL_PRODUCT_PAGE, new PageInfo("Detail Product Page", "/views/sites/detail.jsp", ""));
+		
+		//admin
+		map.put(PageType.ADMIN_HOME_PAGE, new PageInfo("Admin Page", "/views/admins/home.jsp", ""));
+		map.put(PageType.ADMIN_ORDER_PAGE, new PageInfo("Admin Order Page", "/views/admins/order.jsp", ""));
+		map.put(PageType.ADMIN_USER_PAGE, new PageInfo("Admin User Page", "/views/admins/user.jsp", ""));
+		map.put(PageType.ADMIN_USER_FORM_PAGE, new PageInfo("Admin User Page", "/views/admins/user-form.jsp", ""));
+		map.put(PageType.ADMIN_USER_UPDATE_PAGE, new PageInfo("Admin User Page", "/views/admins/user-update.jsp", ""));
+		map.put(PageType.ADMIN_PRODUCT_PAGE, new PageInfo("Admin Product Page", "/views/admins/product.jsp", ""));
+		map.put(PageType.ADMIN_DISCOUNT_PAGE, new PageInfo("Admin Discount Page", "/views/admins/discount.jsp", ""));
+		map.put(PageType.ADMIN_SUPPORT_PAGE, new PageInfo("Admin Support Page", "/views/admins/support.jsp", ""));
+		map.put(PageType.ADMIN_DISCOUNT_FORM_PAGE, new PageInfo("Admin Discount Form Page", "/views/admins/discount-form.jsp", ""));
+		map.put(PageType.ADMIN_DISCOUNT_UPDATE_PAGE, new PageInfo("Admin Discount Update Page", "/views/admins/discount-update.jsp", ""));
+		map.put(PageType.ADMIN_PRODUCT_FORM_PAGE, new PageInfo("Admin Product Form Page", "/views/admins/product-form.jsp", ""));
+		map.put(PageType.ADMIN_PRODUCT_UPDATE_PAGE, new PageInfo("Admin Product Update Page", "/views/admins/product-update.jsp", ""));
+		map.put(PageType.SEARCH_PAGE, new PageInfo("Search Page", "/views/sites/search.jsp", ""));
 	}
 	
 	//hàm chuyển trang thường

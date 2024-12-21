@@ -6,18 +6,17 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.beanutils.BeanUtils;
 
 import com.java.dao.UserDAO;
 import com.java.model.User;
+import com.java.service.EmailService;
 
 @WebServlet("/RegisterServlet")
 public class RegisterServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	public RegisterServlet() {
-		super();
-	}
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -26,32 +25,46 @@ public class RegisterServlet extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		HttpSession session = request.getSession();
+		
 		try {
+			request.setCharacterEncoding("UTF-8");
+			
 			UserDAO userDAO = new UserDAO();
 			
 			User user = new User();
 			
+			EmailService emailService = new EmailService();
+			
 			BeanUtils.populate(user, request.getParameterMap());
 			
-			String message = userDAO.getMessage(user);
+			String hasPublicKey = request.getParameter("hasPublicKey");
+            String userKey = request.getParameter("publicKey"); 
 			
-			if(message == null) {
-
+			if ("on".equalsIgnoreCase(hasPublicKey) && userKey != null && !userKey.trim().isEmpty()) {
+				user.setKey(userKey);
+				userDAO.registerUserWithExistingKey(user);
+				emailService.sendConfirmationEmail(user.getEmail(),  userKey);
+			}else {
+				// Nếu người dùng chưa có key, tạo key mới
 				userDAO.registerUser(user);
+			}
+			
+			String message = userDAO.getMessage(user);
+			if(message == null) {
 				
-				request.setAttribute("message", "Register successfully!");
+				session.setAttribute("message", "Đăng ký thành công!");
 				
 				request.getRequestDispatcher("/views/auth/login.jsp").forward(request, response);
 			}else {
-				request.setAttribute("message", message);
+				session.setAttribute("message", message);
 				
 				doGet(request, response);
 			}
 			
 		} catch (Exception e) {
-			request.setAttribute("message", "Register failed!");
+			session.setAttribute("message", "Đăng ký thất bại!");
 			doGet(request, response);
 		}
 	}
-
 }

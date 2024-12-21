@@ -3,67 +3,77 @@ package com.java.model;
 import java.io.Serializable;
 import javax.persistence.*;
 
+import java.math.BigDecimal;
 
 @Entity
 @Table(name="reviews")
 @NamedQuery(name="Review.findAll", query="SELECT r FROM Review r")
 public class Review implements Serializable {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Id
-	@Column(name="id_reviews")
-	private int idReviews;
+    @Id
+    @Column(name="id_reviews")
+    private int idReviews;
 
-	private String comment;
+    private String comment;
 
-	//bi-directional many-to-one association to user
-	@ManyToOne
-	@JoinColumn(name="id_user")
-	private User user;
+    private int vote;
 
-	//bi-directional many-to-one association to Product
-	@ManyToOne
-	@JoinColumn(name="id_products")
-	private Product product;
+    //bi-directional many-to-one association to user
+    @ManyToOne
+    @JoinColumn(name="id_user")
+    private User user;
 
-	public Review() {
-	}
+    //bi-directional many-to-one association to Product
+    @ManyToOne
+    @JoinColumn(name="id_products")
+    private Product product;
 
-	public int getIdReviews() {
-		return this.idReviews;
-	}
+    public Review() {
+    }
 
-	public void setIdReviews(int idReviews) {
-		this.idReviews = idReviews;
-	}
+    public int getIdReviews() {
+        return this.idReviews;
+    }
 
-	public String getComment() {
-		return this.comment;
-	}
+    public void setIdReviews(int idReviews) {
+        this.idReviews = idReviews;
+    }
 
-	public void setComment(String comment) {
-		this.comment = comment;
-	}
+    public String getComment() {
+        return this.comment;
+    }
 
-	public User getUser() {
-		return this.user;
-	}
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
 
-	public void setUser(User user) {
-		this.user = user;
-	}
+    public int getVote() {
+        return this.vote;
+    }
 
-	public Product getProduct() {
-		return this.product;
-	}
+    public void setVote(int vote) {
+        this.vote = vote;
+    }
 
-	public void setProduct(Product product) {
-		this.product = product;
-	}
+    public User getUser() {
+        return this.user;
+    }
 
-	@Override
-	public String toString() {
-		return "Review [idReviews=" + idReviews + ", comment=" + comment + ", user=" + user + ", product="
-				+ product + "]";
-	}
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Product getProduct() {
+        return this.product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
+    }
+
+    @Override
+    public String toString() {
+        return "Review [idReviews=" + idReviews + ", comment=" + comment + ", vote=" + vote + ", user=" + user + ", product=" + product + "]";
+    }
 }

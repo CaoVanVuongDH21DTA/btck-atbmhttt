@@ -36,5 +36,19 @@ public class ManagerDAO extends EntityDAO<Manager> {
 		}
 		return null;
 	}
-	
+
+	public Manager findByUsername(String username) {
+	    EntityManager em = JpaUtils.getEntityManager();
+	    try {
+	        return em.createQuery("SELECT m FROM Manager m WHERE m.username = :username", Manager.class)
+	                 .setParameter("username", username)
+	                 .getSingleResult();
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return null;
+	    } finally {
+	        em.close();
+	    }
+	}
+
 }

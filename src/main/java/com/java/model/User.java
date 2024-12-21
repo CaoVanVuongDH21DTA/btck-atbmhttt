@@ -3,6 +3,8 @@ package com.java.model;
 import java.io.Serializable;
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.List;
 
 @Entity
@@ -32,15 +34,18 @@ public class User implements Serializable {
 	private String key;
 
 	//bi-directional many-to-one association to CartItem
-	@OneToMany(mappedBy="user")
+	@OneToMany(mappedBy="user", fetch = FetchType.LAZY)
+	@JsonIgnore
 	private List<CartItem> cartItems;
 
-	//bi-directional many-to-one association to Order
-	@OneToMany(mappedBy="user")
+	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+	@JsonIgnore
 	private List<Order> orders;
 
+
 	//bi-directional many-to-one association to Review
-	@OneToMany(mappedBy="user")
+	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+	@JsonIgnore
 	private List<Review> reviews;
 
 	public User() {
